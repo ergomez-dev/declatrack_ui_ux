@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DECLATRACK — Contribuyentes</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1677ff;--primary-bg:#e6f4ff;--success:#52c41a;--warning:#faad14;--error:#ff4d4f;--text-main:#0a0f1e;--text-secondary:#5a6171;--text-muted:#9aa3b0;--border:#dde1e7;--bg-page:#f0f4f8;--bg-card:#fff;--sidebar-w:220px;--topbar-h:56px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-page);color:var(--text-main);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0}
+.sidebar-logo{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),#4096ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.logo-text{font-size:15px;font-weight:700}
+.tenant-badge{margin:12px 14px;background:linear-gradient(135deg,#fff7e6,#fffbe6);border:1px solid #ffd666;border-radius:8px;padding:8px 12px}
+.tenant-name{font-size:12px;font-weight:600;color:#874d00}
+.tenant-plan{display:inline-block;margin-top:2px;font-size:10px;background:#ffc53d;color:#613400;padding:1px 7px;border-radius:10px;font-weight:600}
+.nav{padding:8px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-left:3px solid transparent;transition:all .15s;text-decoration:none}
+.nav-item:hover{background:#f5f7fa;color:var(--text-main)}
+.nav-item.active{color:var(--primary);background:var(--primary-bg);border-left-color:var(--primary)}
+.nav-section{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;padding:14px 20px 4px}
+.sidebar-footer{padding:12px 14px;border-top:1px solid var(--border)}
+.user-chip{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px;cursor:pointer}
+.avatar{width:30px;height:30px;background:var(--primary);border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.user-name{font-size:12.5px;font-weight:600}
+.user-role{font-size:11px;color:var(--text-muted)}
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;z-index:99}
+.topbar-title{font-size:16px;font-weight:700;flex:1}
+.topbar-title span{font-size:13px;font-weight:400;color:var(--text-muted)}
+.topbar-actions{display:flex;align-items:center;gap:12px}
+.lang-btn{padding:5px 12px;border:1px solid var(--border);border-radius:6px;font-size:12px;cursor:pointer;background:#fff;font-family:inherit}
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:24px;flex:1}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.page-header h2{font-size:20px;font-weight:700}
+.page-header p{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.btn{padding:8px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:#0958d9}
+.btn-default{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}
+.btn-default:hover{background:#f5f7fa}
+.btn-danger{background:#fff2f0;color:#a8071a;border:1px solid #ffccc7}
+.btn-sm{padding:4px 10px;font-size:12px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;font-weight:500;color:var(--text-secondary);transition:all .15s}
+.btn-sm:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm-red{border-color:#ffccc7;color:#cf1322;background:#fff2f0}
+.btn-sm-red:hover{background:#ffccc7}
+/* FILTERS */
+.filters-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.search-wrap{position:relative;flex:1;min-width:200px;max-width:320px}
+.search-icon{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted);font-size:14px}
+.search-input{width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:8px;font-size:13.5px;font-family:inherit;outline:none;color:var(--text-main)}
+.search-input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,119,255,.1)}
+select{padding:7px 30px 7px 10px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:inherit;color:var(--text-secondary);background:#fff;cursor:pointer;outline:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239aa3b0' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 8px center}
+.switch-wrap{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary)}
+.switch{width:36px;height:20px;background:var(--primary);border-radius:10px;position:relative;cursor:pointer;flex-shrink:0}
+.switch::after{content:'';width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;transition:all .2s}
+.filters-right{display:flex;align-items:center;gap:8px;margin-left:auto}
+.results-count{font-size:12px;color:var(--text-muted);padding:6px 10px;background:#f5f7fa;border-radius:6px}
+/* TABLE */
+.card{background:var(--bg-card);border-radius:10px;border:1px solid var(--border);overflow:hidden}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);letter-spacing:.4px;text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;background:#fafbfc}
+td{padding:11px 14px;border-bottom:1px solid #f0f2f5;color:var(--text-main);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafbfc}
+.rfc-text{font-family:'Courier New',monospace;font-size:12px;letter-spacing:.3px;color:var(--text-secondary)}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600}
+.badge-resico{background:#f0f5ff;color:#1d39c4;border:1px solid #adc6ff}
+.badge-rif{background:#f6ffed;color:#237804;border:1px solid #b7eb8f}
+.badge-general{background:#fff7e6;color:#873800;border:1px solid #ffd591}
+.badge-otro{background:#fafafa;color:#595959;border:1px solid #d9d9d9}
+.status-dot{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-green{background:var(--success)}
+.dot-red{background:var(--error)}
+.actions-cell{display:flex;gap:6px;white-space:nowrap}
+/* PAGINATION */
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);background:#fafbfc}
+.pag-info{font-size:12px;color:var(--text-muted)}
+.pag-btns{display:flex;gap:4px}
+.pag-btn{width:30px;height:30px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;font-family:inherit;color:var(--text-secondary)}
+.pag-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.pag-btn:hover:not(.active){background:#f5f7fa}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(10,15,30,.5);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:14px;width:520px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-header{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{width:28px;height:28px;border-radius:6px;border:none;background:#f5f7fa;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center}
+.modal-body{padding:24px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{margin-bottom:16px}
+label{display:block;font-size:12.5px;font-weight:500;margin-bottom:5px;color:var(--text-main)}
+input,select.full{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none;color:var(--text-main)}
+input:focus,select.full:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,119,255,.1)}
+textarea{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:70px;outline:none}
+.modal-footer{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+</style>
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">📋</div><span class="logo-text">DECLATRACK</span></div>
+  <div class="tenant-badge"><div class="tenant-name">Despacho Contable Demo S.C.</div><span class="tenant-plan">PRO</span></div>
+  <nav class="nav">
+    <span class="nav-section">General</span>
+    <a class="nav-item" href="02_dashboard.html"><span>📊</span> Dashboard</a>
+    <a class="nav-item active"><span>👥</span> Contribuyentes</a>
+    <a class="nav-item" href="05_declaraciones.html"><span>📄</span> Declaraciones</a>
+    <a class="nav-item" href="06_certificados.html"><span>🔐</span> Certificados</a>
+    <a class="nav-item" href="07_plataformas.html"><span>🌐</span> Plataformas</a>
+    <span class="nav-section">Administración</span>
+    <a class="nav-item" href="08_usuarios.html"><span>👤</span> Usuarios</a>
+    <a class="nav-item" href="10_config.html"><span>⚙️</span> Configuración</a>
+  </nav>
+  <div class="sidebar-footer"><div class="user-chip"><div class="avatar">A</div><div><div class="user-name">Administrador</div><div class="user-role">ADMIN</div></div></div></div>
+</aside>
+
+<header class="topbar">
+  <div class="topbar-title">Contribuyentes <span>/ 31 registros</span></div>
+  <div class="topbar-actions"><button class="lang-btn">🌐 ES</button></div>
+</header>
+
+<main class="main">
+  <div class="page-header">
+    <div><h2>Contribuyentes</h2><p>Gestión del padrón de contribuyentes del despacho</p></div>
+    <button class="btn btn-primary" onclick="openModal('modal-nuevo')">＋ Nuevo contribuyente</button>
+  </div>
+
+  <div class="filters-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-input" type="text" placeholder="Buscar por nombre o RFC..." id="searchInput" oninput="filterTable()">
+    </div>
+    <select id="regimenFilter" onchange="filterTable()">
+      <option value="">Todos los regímenes</option>
+      <option value="RESICO">RESICO</option>
+      <option value="RIF">RIF</option>
+      <option value="GENERAL">General</option>
+      <option value="OTRO">Otro</option>
+    </select>
+    <div class="switch-wrap">
+      <div class="switch"></div>
+      <span>Solo activos</span>
+    </div>
+    <div class="filters-right">
+      <span class="results-count" id="count">31 resultados</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th><th>RFC</th><th>Nombre</th><th>Correo</th><th>Régimen</th><th>Estado</th><th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tbody">
+          <tr data-regimen="RESICO" data-nombre="REYNA VICTORIA AVALOS ZACARIAS" data-rfc="AAZR830117S4A">
+            <td>1</td><td class="rfc-text">AAZR830117S4A</td><td><strong>REYNA V. AVALOS ZACARÍAS</strong></td><td style="font-size:12px;color:var(--text-muted)">reynavic@gmail.com</td><td><span class="badge badge-resico">RESICO</span></td><td><span class="status-dot"><span class="dot dot-green"></span>Activo</span></td>
+            <td class="actions-cell"><button class="btn-sm" onclick="window.location.href='04_contribuyente_detalle.html'">👁 Ver</button><button class="btn-sm">✏️ Editar</button><button class="btn-sm btn-sm-red">🚫 Baja</button></td>
+          </tr>
+          <tr data-regimen="RIF" data-nombre="JESSICA MARIA BARRIOS LEON" data-rfc="BALJ621005UB6">
+            <td>2</td><td class="rfc-text">BALJ621005UB6</td><td><strong>JESSICA M. BARRIOS LEÓN</strong></td><td style="font-size:12px;color:var(--text-muted)">yesmableon@gmail.com</td><td><span class="badge badge-rif">RIF</span></td><td><span class="status-dot"><span class="dot dot-green"></span>Activo</span></td>
+            <td class="actions-cell"><button class="btn-sm" onclick="window.location.href='04_contribuyente_detalle.html'">👁 Ver</button><button class="btn-sm">✏️ Editar</button><button class="btn-sm btn-sm-red">🚫 Baja</button></td>
+          </tr>
+          <tr data-regimen="GENERAL" data-nombre="ARMANDO CAMACHO ALVAREZ" data-rfc="CAAA660222AL3">
+            <td>3</td><td class="rfc-text">CAAA660222AL3</td><td><strong>ARMANDO CAMACHO ÁLVAREZ</strong></td><td style="font-size:12px;color:var(--text-muted)">—</td><td><span class="badge badge-general">General</span></td><td><span class="status-dot"><span class="dot dot-green"></span>Activo</span></td>
+            <td class="actions-cell"><button class="btn-sm">👁 Ver</button><button class="btn-sm">✏️ Editar</button><button class="btn-sm btn-sm-red">🚫 Baja</button></td>
+          </tr>
+          <tr data-regimen="RIF" data-nombre="JAIME CALDERON GUTIERREZ" data-rfc="CAGJ690731GH4">
+            <td>4</td><td class="rfc-text">CAGJ690731GH4</td><td><strong>JAIME CALDERÓN GUTIÉRREZ</strong></td><td style="font-size:12px;color:var(--text-muted)">herreriacalderon232@gmail.com</td><td><span class="badge badge-rif">RIF</span></td><td><span class="status-dot"><span class="dot dot-green"></span>Activo</span></td>
+            <td class="actions-cell"><button class="btn-sm">👁 Ver</button><button class="btn-sm">✏️ Editar</button><button class="btn-sm btn-sm-red">🚫 Baja</button></td>
+          </tr>
+          <tr data-regimen="RIF" data-nombre="GABRIEL CANUL MOJE" data-rfc="CAMG870301CK9">
+            <td>5</td><td class="rfc-text">CAMG870301CK9</td><td><strong>GABRIEL CANUL MOJE</strong></td><td style="font-size:12px;color:var(--text-muted)">gabrielcmoje@gmail.com</td><td><span class="badge badge-rif">RIF</span></td><td><span class="status-dot"><span class="dot dot-green"></span>Activo</span></td>
+            <td class="actions-cell"><button class="btn-sm">👁 Ver</button><button class="btn-sm">✏️ Editar</button><button class="btn-sm btn-sm-red">🚫 Baja</button></td>
+          </tr>
+          <tr data-regimen="RESICO" data-nombre="SILVIA LARA GARCIA" data-rfc="LAGS640210GV4">
+            <td>6</td><td class="rfc-text">LAGS640210GV4</td><td><strong>SILVIA LARA GARCÍA</strong></td><td style="font-size:12px;color:var(--text-muted)">silvialarag64@gmail.com</td><td><span class="badge badge-resico">RESICO</span></td><td><span class="status-dot"><span class="dot dot-green"></span>Activo</span></td>
+            <td class="actions-cell"><button class="btn-sm">👁 Ver</button><button class="btn-sm">✏️ Editar</button><button class="btn-sm btn-sm-red">🚫 Baja</button></td>
+          </tr>
+          <tr data-regimen="GENERAL" data-nombre="DANIEL ROMERO AGUILAR" data-rfc="ROAD980110Q38">
+            <td>7</td><td class="rfc-text">ROAD980110Q38</td><td><strong>DANIEL ROMERO AGUILAR</strong></td><td style="font-size:12px;color:var(--text-muted)">danielromero3233@gmail.com</td><td><span class="badge badge-general">General</span></td><td><span class="status-dot"><span class="dot dot-red"></span>Inactivo</span></td>
+            <td class="actions-cell"><button class="btn-sm">👁 Ver</button><button class="btn-sm">✏️ Editar</button><button class="btn-sm">✅ Reactivar</button></td>
+          </tr>
+          <tr data-regimen="RESICO" data-nombre="EDGAR ISRAEL TUN TUZ" data-rfc="TUTE8107148U2">
+            <td>8</td><td class="rfc-text">TUTE8107148U2</td><td><strong>EDGAR I. TUN TUZ</strong></td><td style="font-size:12px;color:var(--text-muted)">tixtal@hotmail.com</td><td><span class="badge badge-resico">RESICO</span></td><td><span class="status-dot"><span class="dot dot-green"></span>Activo</span></td>
+            <td class="actions-cell"><button class="btn-sm">👁 Ver</button><button class="btn-sm">✏️ Editar</button><button class="btn-sm btn-sm-red">🚫 Baja</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pagination">
+      <span class="pag-info">Mostrando 1–8 de 31 registros</span>
+      <div class="pag-btns">
+        <button class="pag-btn">‹</button>
+        <button class="pag-btn active">1</button>
+        <button class="pag-btn">2</button>
+        <button class="pag-btn">3</button>
+        <button class="pag-btn">4</button>
+        <button class="pag-btn">›</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ═══ MODAL: NUEVO CONTRIBUYENTE ═══ -->
+<div class="modal-bg" id="modal-nuevo">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Nuevo contribuyente</span>
+      <button class="modal-close" onclick="closeModal('modal-nuevo')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>RFC *</label><input type="text" placeholder="AAZR830117S4A" maxlength="13" style="text-transform:uppercase"></div>
+        <div class="form-group"><label>Clave de acceso SAT</label><input type="text" placeholder="alan14rv"></div>
+      </div>
+      <div class="form-group"><label>Nombre completo *</label><input type="text" placeholder="REYNA VICTORIA AVALOS ZACARÍAS"></div>
+      <div class="form-group"><label>Correo electrónico</label><input type="email" placeholder="correo@ejemplo.com"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Régimen fiscal</label><select class="full"><option value="">Seleccionar...</option><option>RESICO</option><option>RIF</option><option>General</option><option>Otro</option></select></div>
+        <div class="form-group" style="display:flex;align-items:flex-end;gap:10px"><div><label>Activo</label></div><div class="switch" style="margin-bottom:2px"></div></div>
+      </div>
+      <div class="form-group"><label>Notas</label><textarea placeholder="Observaciones adicionales..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('modal-nuevo')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAndClose('modal-nuevo','Contribuyente creado correctamente ✅')">Guardar contribuyente</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDITAR CONTRIBUYENTE ═══ -->
+<div class="modal-bg" id="modal-editar">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="editar-title">Editar contribuyente</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px;font-family:monospace" id="editar-rfc-label"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal('modal-editar')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group"><label>RFC</label><input type="text" id="editar-rfc" maxlength="13" style="text-transform:uppercase;background:#f5f7fa;font-family:monospace" readonly></div>
+        <div class="form-group"><label>Clave de acceso SAT</label><input type="text" id="editar-clave"></div>
+      </div>
+      <div class="form-group"><label>Nombre completo *</label><input type="text" id="editar-nombre"></div>
+      <div class="form-group"><label>Correo electrónico</label><input type="email" id="editar-correo"></div>
+      <div class="form-row">
+        <div class="form-group"><label>Régimen fiscal</label>
+          <select class="full" id="editar-regimen">
+            <option>RESICO</option><option>RIF</option><option>General</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="form-group" style="display:flex;align-items:flex-end;gap:10px"><div><label>Activo</label></div><div class="switch" id="editar-switch" style="margin-bottom:2px;background:var(--success)" onclick="this.style.background=this.style.background==='rgb(82,196,26)'?'#d9d9d9':'#52c41a'"></div></div>
+      </div>
+      <div class="form-group"><label>Notas</label><textarea id="editar-notas" placeholder="Observaciones adicionales..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('modal-editar')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAndClose('modal-editar','Cambios guardados correctamente ✅')">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRMAR BAJA ═══ -->
+<div class="modal-bg" id="modal-baja">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <span class="modal-title">⚠️ Confirmar baja</span>
+      <button class="modal-close" onclick="closeModal('modal-baja')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;padding:8px 0 16px">
+        <div style="font-size:42px;margin-bottom:12px">🚫</div>
+        <p style="font-size:14px;font-weight:600;color:var(--text-main);margin-bottom:8px">¿Dar de baja a <span id="baja-nombre" style="color:var(--error)"></span>?</p>
+        <p style="font-size:13px;color:var(--text-secondary);line-height:1.5">El contribuyente quedará inactivo y no aparecerá en los filtros por defecto. Podrás reactivarlo en cualquier momento.</p>
+        <div style="background:#fff7e6;border:1px solid #ffd591;border-radius:8px;padding:10px 14px;margin-top:14px;text-align:left;font-size:12.5px;color:#873800">
+          ⚠️ Sus declaraciones, certificados y plataformas <strong>se conservarán</strong> intactos.
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('modal-baja')">Cancelar</button>
+      <button class="btn" style="background:var(--error);color:#fff" onclick="saveAndClose('modal-baja','Contribuyente dado de baja ✅')">Sí, dar de baja</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST DE ÉXITO ═══ -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:#fff;border:1px solid #b7eb8f;border-radius:10px;padding:14px 18px;font-size:13px;font-weight:600;color:#237804;box-shadow:0 4px 20px rgba(0,0,0,.12);display:none;align-items:center;gap:8px;z-index:9999"></div>
+
+<script>
+// Modal helpers
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function saveAndClose(id,msg){
+  closeModal(id);
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.display='flex';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+// Nuevo contribuyente
+document.querySelector('[onclick="openModal()"]') && 
+  document.querySelector('[onclick="openModal()"]').setAttribute('onclick',"openModal('modal-nuevo')");
+
+// Editar contribuyente — datos de ejemplo por fila
+const contribs={
+  'AAZR830117S4A':{nombre:'REYNA VICTORIA AVALOS ZACARÍAS',clave:'alan14rv',correo:'reynavic@gmail.com',regimen:'RESICO',notas:''},
+  'BALJ621005UB6':{nombre:'JESSICA MARIA BARRIOS LEÓN',clave:'',correo:'yesmableon@gmail.com',regimen:'RIF',notas:''},
+  'CAAA660222AL3':{nombre:'ARMANDO CAMACHO ÁLVAREZ',clave:'',correo:'',regimen:'General',notas:''},
+  'CAGJ690731GH4':{nombre:'JAIME CALDERÓN GUTIÉRREZ',clave:'',correo:'herreriacalderon232@gmail.com',regimen:'RIF',notas:'SIGUE FACTURA 137'},
+  'CAMG870301CK9':{nombre:'GABRIEL CANUL MOJE',clave:'',correo:'gabrielcmoje@gmail.com',regimen:'RIF',notas:''},
+  'LAGS640210GV4':{nombre:'SILVIA LARA GARCÍA',clave:'',correo:'silvialarag64@gmail.com',regimen:'RESICO',notas:''},
+  'ROAD980110Q38':{nombre:'DANIEL ROMERO AGUILAR',clave:'',correo:'danielromero3233@gmail.com',regimen:'General',notas:''},
+  'TUTE8107148U2':{nombre:'EDGAR ISRAEL TUN TUZ',clave:'',correo:'tixtal@hotmail.com',regimen:'RESICO',notas:''},
+};
+
+function editarContrib(rfc){
+  const d=contribs[rfc]||{};
+  document.getElementById('editar-rfc').value=rfc;
+  document.getElementById('editar-rfc-label').textContent='RFC: '+rfc;
+  document.getElementById('editar-title').textContent='Editar: '+d.nombre;
+  document.getElementById('editar-clave').value=d.clave||'';
+  document.getElementById('editar-nombre').value=d.nombre||'';
+  document.getElementById('editar-correo').value=d.correo||'';
+  document.getElementById('editar-notas').value=d.notas||'';
+  const sel=document.getElementById('editar-regimen');
+  for(let o of sel.options) o.selected=o.value===d.regimen||o.text===d.regimen;
+  openModal('modal-editar');
+}
+
+function bajaContrib(nombre){
+  document.getElementById('baja-nombre').textContent=nombre;
+  openModal('modal-baja');
+}
+
+// Wire all edit & baja buttons dynamically
+document.querySelectorAll('#tbody tr').forEach(row=>{
+  const rfc=row.dataset.rfc;
+  const nombre=row.dataset.nombre;
+  const btns=row.querySelectorAll('.btn-sm');
+  btns.forEach(b=>{
+    if(b.textContent.includes('Editar')) b.onclick=()=>editarContrib(rfc);
+    if(b.textContent.includes('Baja'))   b.onclick=()=>bajaContrib(nombre);
+    if(b.textContent.includes('Reactivar')) b.onclick=()=>{
+      const t=document.getElementById('toast');
+      t.textContent='Contribuyente reactivado ✅';t.style.display='flex';setTimeout(()=>t.style.display='none',3000);
+    };
+  });
+});
+
+function filterTable(){
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const r=document.getElementById('regimenFilter').value;
+  const rows=document.querySelectorAll('#tbody tr');
+  let visible=0;
+  rows.forEach(row=>{
+    const nombre=row.dataset.nombre.toLowerCase();
+    const rfc=row.dataset.rfc.toLowerCase();
+    const regimen=row.dataset.regimen;
+    const matchQ=!q||nombre.includes(q)||rfc.includes(q);
+    const matchR=!r||regimen===r;
+    row.style.display=(matchQ&&matchR)?'':'none';
+    if(matchQ&&matchR)visible++;
+  });
+  document.getElementById('count').textContent=visible+' resultados';
+}
+</script>
+</body>
+</html>

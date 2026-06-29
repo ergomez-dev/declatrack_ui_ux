@@ -1,0 +1,223 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>DECLATRACK — Despachos (SUPERADMIN)</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1677ff;--primary-bg:#e6f4ff;--purple:#722ed1;--purple-bg:#f9f0ff;--success:#52c41a;--error:#ff4d4f;--text-main:#0a0f1e;--text-secondary:#5a6171;--text-muted:#9aa3b0;--border:#dde1e7;--bg-page:#f0f4f8;--bg-card:#fff;--sidebar-w:220px;--topbar-h:56px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-page);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:#0d1b4b;border-right:none;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0}
+.sl{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.1);display:flex;align-items:center;gap:10px}
+.li{width:34px;height:34px;background:linear-gradient(135deg,#4096ff,#1677ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.lt{font-size:15px;font-weight:700;color:#fff}
+.superadmin-chip{margin:12px 14px;background:linear-gradient(135deg,#4b1d9e,#722ed1);border-radius:8px;padding:8px 12px}
+.sc-label{font-size:10px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.6px}
+.sc-role{font-size:13px;font-weight:700;color:#fff;margin-top:2px}
+.nav{padding:8px 0;flex:1}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;border-left:3px solid transparent;transition:all .15s;text-decoration:none}
+.ni:hover{background:rgba(255,255,255,.08);color:#fff}
+.ni.active{color:#fff;background:rgba(22,119,255,.2);border-left-color:#4096ff}
+.ns{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.8px;text-transform:uppercase;padding:14px 20px 4px}
+.sf{padding:12px 14px;border-top:1px solid rgba(255,255,255,.1)}
+.uc{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px;cursor:pointer}.uc:hover{background:rgba(255,255,255,.08)}
+.av{width:30px;height:30px;background:var(--purple);border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.un{font-size:12.5px;font-weight:600;color:#fff}.ur{font-size:11px;color:rgba(255,255,255,.5)}
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;z-index:99}
+.tt{font-size:16px;font-weight:700;flex:1}.sa-badge{padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600;background:var(--purple-bg);color:var(--purple);border:1px solid #d3adf7;margin-left:10px}
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:24px;flex:1}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.ph h2{font-size:20px;font-weight:700}.ph p{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.btn{padding:8px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--purple);color:#fff}
+.kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.kpi-card{background:#fff;border-radius:10px;padding:20px;border:1px solid var(--border)}
+.kpi-label{font-size:12px;font-weight:500;color:var(--text-secondary);margin-bottom:8px}
+.kpi-value{font-size:32px;font-weight:700}
+.kpi-sub{font-size:12px;color:var(--text-muted);margin-top:4px}
+.card{background:var(--bg-card);border-radius:10px;border:1px solid var(--border);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:#fafbfc;white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid #f0f2f5;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafbfc}
+.plan-badge{padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600}
+.p-free{background:#fafafa;color:#595959;border:1px solid #d9d9d9}
+.p-basic{background:#e6f4ff;color:#003eb3;border:1px solid #91caff}
+.p-pro{background:#fff7e6;color:#873800;border:1px solid #ffd591}
+.p-ent{background:var(--purple-bg);color:#531dab;border:1px solid #d3adf7}
+.status-dot{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%}.dot-g{background:var(--success)}.dot-r{background:var(--error)}
+.btn-sm{padding:4px 10px;font-size:12px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;font-weight:500;color:var(--text-secondary)}.btn-sm:hover{border-color:var(--primary);color:var(--primary)}
+.slug-text{font-family:'Courier New',monospace;font-size:11.5px;color:var(--text-muted)}
+.modal-bg{position:fixed;inset:0;background:rgba(10,15,30,.5);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:14px;width:480px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:16px;font-weight:700}.modal-close{width:28px;height:28px;border-radius:6px;border:none;background:#f5f7fa;cursor:pointer;font-size:16px}
+.modal-body{padding:20px 24px}
+.form-group{margin-bottom:14px}
+label{display:block;font-size:12.5px;font-weight:500;margin-bottom:5px}
+input,select.full{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none}
+input:focus{border-color:var(--purple)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.btn-default{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sl"><div class="li">📋</div><span class="lt">DECLATRACK</span></div>
+  <div class="superadmin-chip"><div class="sc-label">⚡ Modo plataforma</div><div class="sc-role">SUPERADMIN</div></div>
+  <nav class="nav">
+    <span class="ns">Gestión global</span>
+    <a class="ni active">🏢 Despachos</a>
+    <a class="ni">👤 Usuarios globales</a>
+    <a class="ni">📊 Estadísticas</a>
+    <span class="ns">Sistema</span>
+    <a class="ni">⚙️ Configuración</a>
+    <a class="ni">📋 Auditoría</a>
+  </nav>
+  <div class="sf"><div class="uc"><div class="av">S</div><div><div class="un">Super Admin</div><div class="ur">SUPERADMIN</div></div></div></div>
+</aside>
+<header class="topbar">
+  <div class="tt">Despachos contables<span class="sa-badge">⚡ Vista SUPERADMIN</span></div>
+  <div style="display:flex;gap:8px"><button class="btn btn-primary" onclick="document.getElementById('modal').classList.add('show')">＋ Nuevo despacho</button></div>
+</header>
+<main class="main">
+  <div class="ph"><div><h2>Gestión de despachos</h2><p>Panel de administración de todos los tenants de la plataforma</p></div></div>
+  <div class="kpi-grid">
+    <div class="kpi-card"><div class="kpi-label">🏢 Despachos activos</div><div class="kpi-value" style="color:var(--purple)">2</div><div class="kpi-sub">de 10 contratados</div></div>
+    <div class="kpi-card"><div class="kpi-label">👥 Contribuyentes totales</div><div class="kpi-value" style="color:var(--primary)">32</div><div class="kpi-sub">en todos los despachos</div></div>
+    <div class="kpi-card"><div class="kpi-label">👤 Usuarios totales</div><div class="kpi-value" style="color:var(--success)">5</div><div class="kpi-sub">contando todos los tenants</div></div>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Despacho</th><th>Slug</th><th>Plan</th><th>Contribuyentes</th><th>Usuarios</th><th>Estado</th><th>Creado</th><th>Acciones</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><div style="font-weight:700;font-size:13.5px">Despacho Contable Demo S.C.</div><div style="font-size:11px;color:var(--text-muted)">admin@despacho-demo.com</div></td>
+          <td class="slug-text">despacho-demo</td>
+          <td><span class="plan-badge p-pro">PRO</span></td>
+          <td><span style="font-weight:700">3</span><span style="font-size:11px;color:var(--text-muted)"> / 50</span></td>
+          <td><span style="font-weight:700">2</span></td>
+          <td><span class="status-dot"><span class="dot dot-g"></span>Activo</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">01/ene/2026</td>
+          <td><div style="display:flex;gap:6px"><button class="btn-sm" onclick="window.location.href='10_config.html'">⚙️ Config</button><button class="btn-sm" onclick="abrirEditar('Despacho Contable Demo S.C.','despacho-demo','admin@despacho-demo.com','PRO','50')">✏️ Editar</button></div></td>
+        </tr>
+        <tr>
+          <td><div style="font-weight:700;font-size:13.5px">Contadores Unidos MX</div><div style="font-size:11px;color:var(--text-muted)">admin@contadores-unidos.com</div></td>
+          <td class="slug-text">contadores-unidos</td>
+          <td><span class="plan-badge p-basic">BASIC</span></td>
+          <td><span style="font-weight:700">1</span><span style="font-size:11px;color:var(--text-muted)"> / 20</span></td>
+          <td><span style="font-weight:700">1</span></td>
+          <td><span class="status-dot"><span class="dot dot-g"></span>Activo</span></td>
+          <td style="font-size:12px;color:var(--text-muted)">15/mar/2026</td>
+          <td><div style="display:flex;gap:6px"><button class="btn-sm">⚙️ Config</button><button class="btn-sm" onclick="abrirEditar('Contadores Unidos MX','contadores-unidos','admin@contadores-unidos.com','BASIC','20')">✏️ Editar</button><button class="btn-sm" style="border-color:#ffccc7;color:#cf1322;background:#fff2f0" onclick="abrirDesactivar('Contadores Unidos MX')">🚫</button></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<!-- ═══ MODAL: NUEVO DESPACHO ═══ -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">Nuevo despacho</span><button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nombre del despacho *</label><input id="nombre-input" placeholder="Ej: Despacho García S.C." oninput="autoSlug()"></div>
+      <div class="form-group"><label>Slug (identificador URL) *</label><input id="slug-input" placeholder="despacho-garcia" style="font-family:monospace"></div>
+      <div class="form-row">
+        <div class="form-group"><label>RFC del despacho</label><input placeholder="GARM820301AB1"></div>
+        <div class="form-group"><label>Plan</label><select class="full"><option>FREE</option><option>BASIC</option><option selected>PRO</option><option>ENTERPRISE</option></select></div>
+      </div>
+      <div class="form-group"><label>Correo de contacto</label><input type="email" placeholder="admin@despacho.com"></div>
+      <div class="form-group"><label>Límite de contribuyentes</label><input type="number" value="50"></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-default" onclick="document.getElementById('modal').classList.remove('show')">Cancelar</button><button class="btn btn-primary" onclick="document.getElementById('modal').classList.remove('show');showToast('Despacho creado correctamente ✅')">Crear despacho</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDITAR DESPACHO ═══ -->
+<div class="modal-bg" id="m-editar-tenant">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">✏️ Editar despacho</div>
+        <div style="font-size:11px;color:var(--text-muted);font-family:monospace;margin-top:2px" id="et-slug-label"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('m-editar-tenant').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nombre del despacho *</label><input id="et-nombre" placeholder="Nombre del despacho"></div>
+      <div class="form-group">
+        <label>Slug</label>
+        <input id="et-slug" style="font-family:monospace;background:#f5f7fa" readonly>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:3px">El slug no puede modificarse después de la creación</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label>RFC del despacho</label><input id="et-rfc" placeholder="RFC opcional"></div>
+        <div class="form-group"><label>Plan</label>
+          <select id="et-plan" class="full"><option>FREE</option><option>BASIC</option><option>PRO</option><option>ENTERPRISE</option></select>
+        </div>
+      </div>
+      <div class="form-group"><label>Correo de contacto</label><input id="et-correo" type="email" placeholder="admin@despacho.com"></div>
+      <div class="form-group"><label>Límite de contribuyentes</label><input id="et-limite" type="number" min="1"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+        <div><div style="font-size:13.5px;font-weight:500">Despacho activo</div><div style="font-size:11.5px;color:var(--text-muted)">Deshabilitar bloquea el acceso de todos sus usuarios</div></div>
+        <div style="width:40px;height:22px;background:#52c41a;border-radius:11px;position:relative;cursor:pointer" id="et-sw"><div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="document.getElementById('m-editar-tenant').classList.remove('show')">Cancelar</button>
+      <button class="btn btn-primary" onclick="document.getElementById('m-editar-tenant').classList.remove('show');showToast('Despacho actualizado correctamente ✅')">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: DESACTIVAR DESPACHO ═══ -->
+<div class="modal-bg" id="m-desactivar-tenant">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <span class="modal-title">⚠️ Desactivar despacho</span>
+      <button class="modal-close" onclick="document.getElementById('m-desactivar-tenant').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:24px">
+      <div style="font-size:40px;margin-bottom:12px">🏢</div>
+      <p style="font-size:14px;font-weight:700;margin-bottom:8px">¿Desactivar <span id="dt-nombre" style="color:var(--error)"></span>?</p>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;margin-bottom:14px">Todos los usuarios de este despacho perderán acceso inmediatamente. Los datos se conservan.</p>
+      <div style="background:#fff2f0;border:1px solid #ffccc7;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#a8071a;text-align:left">
+        ⚠️ Esta acción afecta a <strong>todos los usuarios</strong> del despacho. Podrás reactivarlo en cualquier momento.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="document.getElementById('m-desactivar-tenant').classList.remove('show')">Cancelar</button>
+      <button class="btn" style="background:var(--error);color:#fff" onclick="document.getElementById('m-desactivar-tenant').classList.remove('show');showToast('Despacho desactivado ✅')">Sí, desactivar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="tenant-toast" style="position:fixed;bottom:24px;right:24px;background:#fff;border:1px solid #b7eb8f;border-radius:10px;padding:14px 18px;font-size:13px;font-weight:600;color:#237804;box-shadow:0 4px 20px rgba(0,0,0,.12);display:none;align-items:center;gap:8px;z-index:9999"></div>
+
+<script>
+function showToast(msg){
+  const t=document.getElementById('tenant-toast');
+  t.textContent=msg;t.style.display='flex';
+  setTimeout(()=>t.style.display='none',3000);
+}
+function autoSlug(){
+  const v=document.getElementById('nombre-input').value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');
+  document.getElementById('slug-input').value=v;
+}
+function abrirEditar(nombre,slug,correo,plan,limite){
+  document.getElementById('et-nombre').value=nombre;
+  document.getElementById('et-slug').value=slug;
+  document.getElementById('et-slug-label').textContent='slug: '+slug;
+  document.getElementById('et-correo').value=correo;
+  document.getElementById('et-limite').value=limite;
+  const sel=document.getElementById('et-plan');
+  for(let o of sel.options) o.selected=o.value===plan||o.text===plan;
+  document.getElementById('m-editar-tenant').classList.add('show');
+}
+function abrirDesactivar(nombre){
+  document.getElementById('dt-nombre').textContent=nombre;
+  document.getElementById('m-desactivar-tenant').classList.add('show');
+}
+</script>
+</body></html>

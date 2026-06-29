@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DECLATRACK — Login</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --primary:#1677ff;--primary-hover:#0958d9;--primary-bg:#e6f4ff;
+    --success:#52c41a;--warning:#faad14;--error:#ff4d4f;
+    --text-main:#0a0f1e;--text-secondary:#5a6171;--text-muted:#9aa3b0;
+    --border:#dde1e7;--bg-page:#f0f4f8;--bg-card:#ffffff;
+    --shadow:0 4px 24px rgba(10,15,30,.10);--radius:12px;
+  }
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-page);min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#e8f0fe 0%,#f0f4f8 50%,#fef9e7 100%)}
+  .login-wrap{width:100%;max-width:420px;padding:24px}
+  .card{background:var(--bg-card);border-radius:var(--radius);box-shadow:var(--shadow);padding:40px 36px;border:1px solid var(--border)}
+  .brand{text-align:center;margin-bottom:32px}
+  .brand-icon{width:56px;height:56px;background:linear-gradient(135deg,var(--primary),#4096ff);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:26px}
+  .brand h1{font-size:22px;font-weight:700;color:var(--text-main);letter-spacing:-.3px}
+  .brand p{font-size:13px;color:var(--text-secondary);margin-top:4px}
+  .form-group{margin-bottom:16px}
+  label{display:block;font-size:13px;font-weight:500;color:var(--text-main);margin-bottom:6px}
+  .input-wrap{position:relative;display:flex;align-items:center}
+  .input-icon{position:absolute;left:12px;color:var(--text-muted);font-size:15px;pointer-events:none}
+  input{width:100%;padding:10px 12px 10px 36px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;color:var(--text-main);background:#fff;transition:border .2s,box-shadow .2s;outline:none}
+  input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,119,255,.12)}
+  input::placeholder{color:var(--text-muted)}
+  .optional-tag{font-size:11px;font-weight:400;color:var(--text-muted);margin-left:6px;background:#f5f5f5;padding:1px 6px;border-radius:4px}
+  .btn{width:100%;padding:11px;background:var(--primary);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;transition:background .2s,transform .1s;margin-top:8px;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px}
+  .btn:hover{background:var(--primary-hover)}
+  .btn:active{transform:scale(.99)}
+  .btn.loading{opacity:.8;pointer-events:none}
+  .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .alert{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px}
+  .alert-error{background:#fff2f0;border:1px solid #ffccc7;color:#a8071a}
+  .alert-info{background:var(--primary-bg);border:1px solid #91caff;color:#003eb3}
+  .divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+  .footer-text{text-align:center;font-size:12px;color:var(--text-muted);margin-top:20px}
+  .mode-tabs{display:flex;background:#f5f7fa;border-radius:8px;padding:3px;margin-bottom:24px;gap:3px}
+  .mode-tab{flex:1;padding:7px;text-align:center;font-size:13px;font-weight:500;border-radius:6px;cursor:pointer;border:none;background:transparent;color:var(--text-secondary);font-family:inherit;transition:all .2s}
+  .mode-tab.active{background:#fff;color:var(--primary);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+  .superadmin-badge{display:inline-flex;align-items:center;gap:5px;background:linear-gradient(135deg,#722ed1,#9254de);color:#fff;font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="card">
+    <div class="brand">
+      <div class="brand-icon">📋</div>
+      <h1>DECLATRACK</h1>
+      <p>Sistema de Control de Declaraciones SAT</p>
+    </div>
+
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setMode('tenant')">Despacho</button>
+      <button class="mode-tab" onclick="setMode('superadmin')">Plataforma</button>
+    </div>
+
+    <div id="alert-area"></div>
+
+    <div id="mode-tenant">
+      <div class="form-group">
+        <label>Slug del despacho <span class="optional-tag">requerido</span></label>
+        <div class="input-wrap">
+          <span class="input-icon">🏢</span>
+          <input type="text" id="slug" placeholder="ej: despacho-garcia" value="despacho-demo" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Correo electrónico</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input type="email" id="email" placeholder="usuario@despacho.com" value="admin@despacho-demo.com"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input type="password" id="password" placeholder="••••••••" value="Admin2026!"/>
+        </div>
+      </div>
+    </div>
+
+    <div id="mode-superadmin" style="display:none">
+      <div style="text-align:center;margin-bottom:16px">
+        <span class="superadmin-badge">⚡ Acceso de plataforma</span>
+      </div>
+      <div class="form-group">
+        <label>Correo de administrador</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉️</span>
+          <input type="email" placeholder="superadmin@declatrack.com" value="superadmin@declatrack.com"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <div class="input-wrap">
+          <span class="input-icon">🔒</span>
+          <input type="password" placeholder="••••••••" value="Super2026!"/>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn" id="login-btn" onclick="doLogin()">
+      <span id="btn-text">Iniciar sesión</span>
+    </button>
+
+    <hr class="divider">
+    <p class="footer-text">¿Sin cuenta? Contacta a tu administrador de despacho.</p>
+  </div>
+  <p class="footer-text" style="margin-top:16px">© 2026 DECLATRACK · Todos los derechos reservados</p>
+</div>
+
+<script>
+let currentMode = 'tenant';
+function setMode(m) {
+  currentMode = m;
+  document.getElementById('mode-tenant').style.display = m === 'tenant' ? '' : 'none';
+  document.getElementById('mode-superadmin').style.display = m === 'superadmin' ? '' : 'none';
+  document.querySelectorAll('.mode-tab').forEach((t,i)=>t.classList.toggle('active', (i===0&&m==='tenant')||(i===1&&m==='superadmin')));
+  document.getElementById('alert-area').innerHTML='';
+}
+function doLogin() {
+  const btn = document.getElementById('login-btn');
+  const txt = document.getElementById('btn-text');
+  btn.classList.add('loading');
+  txt.innerHTML = '<div class="spinner"></div> Verificando...';
+  document.getElementById('alert-area').innerHTML = '';
+  setTimeout(()=>{
+    btn.classList.remove('loading');
+    if(currentMode==='tenant'){
+      document.getElementById('alert-area').innerHTML='<div class="alert alert-info">✅ Login exitoso como <strong>ADMIN</strong> en <strong>Despacho Demo S.C.</strong> — redirigiendo al dashboard...</div>';
+      setTimeout(()=>{ window.location.href='02_dashboard.html'; },1200);
+    } else {
+      document.getElementById('alert-area').innerHTML='<div class="alert alert-info">✅ Login como <strong>SUPERADMIN</strong> — redirigiendo a gestión de despachos...</div>';
+      setTimeout(()=>{ window.location.href='09_tenants.html'; },1200);
+    }
+    txt.textContent='Iniciar sesión';
+  },1400);
+}
+</script>
+</body>
+</html>

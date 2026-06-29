@@ -1,0 +1,279 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>DECLATRACK — Certificados</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1677ff;--primary-bg:#e6f4ff;--success:#52c41a;--warning:#faad14;--error:#ff4d4f;--text-main:#0a0f1e;--text-secondary:#5a6171;--text-muted:#9aa3b0;--border:#dde1e7;--bg-page:#f0f4f8;--bg-card:#fff;--sidebar-w:220px;--topbar-h:56px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-page);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0}
+.sl{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.li{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),#4096ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.lt{font-size:15px;font-weight:700}
+.tb{margin:12px 14px;background:linear-gradient(135deg,#fff7e6,#fffbe6);border:1px solid #ffd666;border-radius:8px;padding:8px 12px}
+.tn{font-size:12px;font-weight:600;color:#874d00}.tp{display:inline-block;margin-top:2px;font-size:10px;background:#ffc53d;color:#613400;padding:1px 7px;border-radius:10px;font-weight:600}
+.nav{padding:8px 0;flex:1}.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-left:3px solid transparent;transition:all .15s;text-decoration:none}.ni:hover{background:#f5f7fa}.ni.active{color:var(--primary);background:var(--primary-bg);border-left-color:var(--primary)}.ns{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;padding:14px 20px 4px}
+.sf{padding:12px 14px;border-top:1px solid var(--border)}.uc{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px;cursor:pointer}.av{width:30px;height:30px;background:var(--primary);border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.un{font-size:12.5px;font-weight:600}.ur{font-size:11px;color:var(--text-muted)}
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;z-index:99}
+.tt{font-size:16px;font-weight:700;flex:1}.tt span{font-size:13px;font-weight:400;color:var(--text-muted)}
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:24px;flex:1}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.ph h2{font-size:20px;font-weight:700}.ph p{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.btn{padding:8px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}
+.tabs-bar{display:flex;gap:2px;background:#f5f7fa;border-radius:8px;padding:3px;margin-bottom:20px;max-width:300px}
+.tab{padding:6px 18px;font-size:13px;font-weight:500;border-radius:6px;border:none;background:transparent;color:var(--text-secondary);cursor:pointer;font-family:inherit}
+.tab.active{background:#fff;color:var(--primary);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.section{margin-bottom:24px}
+.section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.section-title{font-size:15px;font-weight:700}
+.alert-badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.ab-red{background:#fff2f0;color:#a8071a;border:1px solid #ffccc7}
+.ab-orange{background:#fffbe6;color:#873800;border:1px solid #ffd591}
+.ab-blue{background:#e6f4ff;color:#003eb3;border:1px solid #91caff}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:12px}
+.cert-row{background:#fff;border-radius:10px;border:1px solid var(--border);padding:14px 16px;display:flex;align-items:center;gap:14px}
+.cert-row.danger{border-color:#ffccc7;background:#fff2f0}
+.cert-row.warning{border-color:#ffe58f;background:#fffbe6}
+.cert-row.ok{border-color:#d9f7be;background:#f6ffed}
+.cert-icon{font-size:28px;flex-shrink:0}
+.cert-info{flex:1;min-width:0}
+.cert-name{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cert-rfc{font-size:11px;color:var(--text-muted);font-family:monospace;margin-top:1px}
+.cert-meta{display:flex;gap:12px;margin-top:6px}
+.cert-meta-item{font-size:12px;color:var(--text-secondary);display:flex;align-items:center;gap:4px}
+.cert-days{font-size:22px;font-weight:800;flex-shrink:0;text-align:right;min-width:64px}
+.cert-days.red{color:var(--error)}.cert-days.orange{color:var(--warning)}.cert-days.green{color:var(--success)}
+.cert-actions{flex-shrink:0;display:flex;flex-direction:column;gap:4px}
+.btn-xs{padding:3px 9px;font-size:11.5px;border-radius:5px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;font-weight:500;color:var(--text-secondary)}
+.btn-xs:hover{border-color:var(--primary);color:var(--primary)}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sl"><div class="li">📋</div><span class="lt">DECLATRACK</span></div>
+  <div class="tb"><div class="tn">Despacho Contable Demo S.C.</div><span class="tp">PRO</span></div>
+  <nav class="nav">
+    <span class="ns">General</span>
+    <a class="ni" href="02_dashboard.html"><span>📊</span> Dashboard</a>
+    <a class="ni" href="03_contribuyentes.html"><span>👥</span> Contribuyentes</a>
+    <a class="ni" href="05_declaraciones.html"><span>📄</span> Declaraciones</a>
+    <a class="ni active"><span>🔐</span> Certificados</a>
+    <a class="ni" href="07_plataformas.html"><span>🌐</span> Plataformas</a>
+    <span class="ns">Administración</span>
+    <a class="ni" href="08_usuarios.html"><span>👤</span> Usuarios</a>
+    <a class="ni" href="10_config.html"><span>⚙️</span> Configuración</a>
+  </nav>
+  <div class="sf"><div class="uc"><div class="av">A</div><div><div class="un">Administrador</div><div class="ur">ADMIN</div></div></div></div>
+</aside>
+<header class="topbar">
+  <div class="tt">Certificados <span>/ e.firma y CSD</span></div>
+  <div style="display:flex;gap:8px"><button class="btn btn-primary" style="font-size:13px;padding:6px 14px">🌐 ES</button></div>
+</header>
+<main class="main">
+  <div class="ph"><div><h2>Certificados digitales</h2><p>Control de vencimientos de e.firma y CSD por contribuyente</p></div></div>
+  <div class="tabs-bar">
+    <button class="tab active" onclick="showCert('all',this)">Todos (31)</button>
+    <button class="tab" onclick="showCert('efirma',this)">E.firma</button>
+    <button class="tab" onclick="showCert('csd',this)">CSD</button>
+  </div>
+
+  <!-- VENCIDOS -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">🔴 Vencidos</span>
+      <span class="alert-badge ab-red">2 certificados</span>
+    </div>
+    <div class="card-grid">
+      <div class="cert-row danger">
+        <div class="cert-icon">🔐</div>
+        <div class="cert-info">
+          <div class="cert-name">REYNA V. AVALOS ZACARÍAS</div>
+          <div class="cert-rfc">AAZR830117S4A</div>
+          <div class="cert-meta">
+            <span class="cert-meta-item">📋 E.FIRMA</span>
+            <span class="cert-meta-item">📅 Venció 14/may/2026</span>
+          </div>
+        </div>
+        <div class="cert-days red">-43<br><span style="font-size:10px;font-weight:500">días</span></div>
+        <div class="cert-actions"><button class="btn-xs" onclick="abrirActualizar('E.FIRMA','REYNA V. AVALOS ZACARÍAS','AAZR830117S4A','vencida')">✏️ Actualizar</button><button class="btn-xs" onclick="abrirAvisar('REYNA V. AVALOS ZACARÍAS','E.FIRMA')">✉️ Avisar</button></div>
+      </div>
+      <div class="cert-row danger">
+        <div class="cert-icon">🔐</div>
+        <div class="cert-info">
+          <div class="cert-name">GABRIEL CANUL MOJE</div>
+          <div class="cert-rfc">CAMG870301CK9</div>
+          <div class="cert-meta">
+            <span class="cert-meta-item">📋 E.FIRMA</span>
+            <span class="cert-meta-item">📅 Venció 06/jun/2026</span>
+          </div>
+        </div>
+        <div class="cert-days red">-21<br><span style="font-size:10px;font-weight:500">días</span></div>
+        <div class="cert-actions"><button class="btn-xs" onclick="abrirActualizar('E.FIRMA','GABRIEL CANUL MOJE','CAMG870301CK9','vencida')">✏️ Actualizar</button><button class="btn-xs" onclick="abrirAvisar('GABRIEL CANUL MOJE','E.FIRMA')">✉️ Avisar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRÓXIMOS 7 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">🟡 Próximos 7 días</span>
+      <span class="alert-badge ab-orange">3 certificados</span>
+    </div>
+    <div class="card-grid">
+      <div class="cert-row warning">
+        <div class="cert-icon">🔐</div>
+        <div class="cert-info">
+          <div class="cert-name">JESSICA M. BARRIOS LEÓN</div>
+          <div class="cert-rfc">BALJ621005UB6</div>
+          <div class="cert-meta"><span class="cert-meta-item">📋 E.FIRMA</span><span class="cert-meta-item">📅 02/jul/2026</span></div>
+        </div>
+        <div class="cert-days orange">5<br><span style="font-size:10px;font-weight:500">días</span></div>
+        <div class="cert-actions"><button class="btn-xs" onclick="abrirActualizar('E.FIRMA','JESSICA M. BARRIOS LEÓN','BALJ621005UB6','proxima')">✏️ Actualizar</button><button class="btn-xs" onclick="abrirAvisar('JESSICA M. BARRIOS LEÓN','E.FIRMA')">✉️ Avisar</button></div>
+      </div>
+      <div class="cert-row warning">
+        <div class="cert-icon">🔐</div>
+        <div class="cert-info">
+          <div class="cert-name">MIRNA M. SOSA GÓMEZ</div>
+          <div class="cert-rfc">SOGM710730N65</div>
+          <div class="cert-meta"><span class="cert-meta-item">🔑 CSD</span><span class="cert-meta-item">📅 04/jul/2026</span></div>
+        </div>
+        <div class="cert-days orange">7<br><span style="font-size:10px;font-weight:500">días</span></div>
+        <div class="cert-actions"><button class="btn-xs" onclick="abrirActualizar('CSD','MIRNA M. SOSA GÓMEZ','SOGM710730N65','proxima')">✏️ Actualizar</button><button class="btn-xs" onclick="abrirAvisar('MIRNA M. SOSA GÓMEZ','CSD')">✉️ Avisar</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRÓXIMOS 30 -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-title">🔵 Próximos 30 días</span>
+      <span class="alert-badge ab-blue">4 certificados</span>
+    </div>
+    <div class="card-grid">
+      <div class="cert-row ok">
+        <div class="cert-icon">🔐</div>
+        <div class="cert-info">
+          <div class="cert-name">JAIME CALDERÓN GUTIÉRREZ</div>
+          <div class="cert-rfc">CAGJ690731GH4</div>
+          <div class="cert-meta"><span class="cert-meta-item">🔑 CSD</span><span class="cert-meta-item">📅 09/jul/2026</span></div>
+        </div>
+        <div class="cert-days" style="color:#006d75">12<br><span style="font-size:10px;font-weight:500">días</span></div>
+        <div class="cert-actions"><button class="btn-xs" onclick="abrirActualizar('CSD','JAIME CALDERÓN GUTIÉRREZ','CAGJ690731GH4','proxima')">✏️ Actualizar</button><button class="btn-xs" style="background:#d9f7be;border-color:#b7eb8f;color:#237804">✓ Alerta enviada</button></div>
+      </div>
+      <div class="cert-row ok">
+        <div class="cert-icon">🔐</div>
+        <div class="cert-info">
+          <div class="cert-name">ARMANDO CAMACHO ÁLVAREZ</div>
+          <div class="cert-rfc">CAAA660222AL3</div>
+          <div class="cert-meta"><span class="cert-meta-item">🔑 CSD</span><span class="cert-meta-item">📅 14/jul/2026</span></div>
+        </div>
+        <div class="cert-days green">17<br><span style="font-size:10px;font-weight:500">días</span></div>
+        <div class="cert-actions"><button class="btn-xs" onclick="abrirActualizar('CSD','ARMANDO CAMACHO ÁLVAREZ','CAAA660222AL3','proxima')">✏️ Actualizar</button><button class="btn-xs" onclick="abrirAvisar('ARMANDO CAMACHO ÁLVAREZ','CSD')">✉️ Avisar</button></div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ═══ MODAL: ACTUALIZAR FECHA CERTIFICADO ═══ -->
+<div id="m-actualizar" style="position:fixed;inset:0;background:rgba(10,15,30,.5);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
+  <div style="background:#fff;border-radius:14px;width:460px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-size:16px;font-weight:700">✏️ Actualizar certificado</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="act-subtitulo"></div>
+      </div>
+      <button onclick="document.getElementById('m-actualizar').style.display='none'" style="width:28px;height:28px;border-radius:6px;border:none;background:#f5f7fa;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="padding:20px 24px">
+      <div id="act-alerta-banner" style="border-radius:8px;padding:9px 13px;font-size:12.5px;margin-bottom:16px"></div>
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Tipo de certificado</label>
+        <select id="act-tipo" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+          <option>E.FIRMA</option><option>CSD</option>
+        </select>
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Nueva fecha de vencimiento *</label>
+        <input type="date" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+      </div>
+      <div style="margin-bottom:14px">
+        <label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Fecha descarga XML</label>
+        <input type="date" style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+      </div>
+      <div>
+        <label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Notas</label>
+        <textarea style="width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:56px;outline:none" placeholder="Observaciones opcionales..."></textarea>
+      </div>
+    </div>
+    <div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px">
+      <button onclick="document.getElementById('m-actualizar').style.display='none'" style="padding:8px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;background:#fff;color:var(--text-secondary);border:1px solid var(--border);font-family:inherit">Cancelar</button>
+      <button onclick="document.getElementById('m-actualizar').style.display='none';showToast('Certificado actualizado correctamente ✅')" style="padding:8px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;background:var(--primary);color:#fff;border:none;font-family:inherit">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRMAR AVISAR ═══ -->
+<div id="m-avisar" style="position:fixed;inset:0;background:rgba(10,15,30,.5);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)">
+  <div style="background:#fff;border-radius:14px;width:420px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.25)">
+    <div style="padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:16px;font-weight:700">✉️ Enviar alerta de vencimiento</span>
+      <button onclick="document.getElementById('m-avisar').style.display='none'" style="width:28px;height:28px;border-radius:6px;border:none;background:#f5f7fa;cursor:pointer;font-size:16px">✕</button>
+    </div>
+    <div style="padding:24px;text-align:center">
+      <div style="font-size:36px;margin-bottom:12px">📧</div>
+      <p style="font-size:14px;font-weight:600;margin-bottom:8px">Notificar al contribuyente</p>
+      <p style="font-size:13px;color:var(--text-secondary);margin-bottom:16px" id="avisar-texto"></p>
+      <div style="background:#f5f7fa;border-radius:8px;padding:12px;text-align:left;font-size:12.5px;color:var(--text-secondary)">
+        <div style="font-weight:600;margin-bottom:4px">Se enviará correo a:</div>
+        <div id="avisar-correo" style="font-family:monospace;color:var(--text-main)">correo@contribuyente.com</div>
+        <div style="font-size:11px;margin-top:6px;color:var(--text-muted)">Configurado en perfil del contribuyente</div>
+      </div>
+    </div>
+    <div style="padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px">
+      <button onclick="document.getElementById('m-avisar').style.display='none'" style="padding:8px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;background:#fff;color:var(--text-secondary);border:1px solid var(--border);font-family:inherit">Cancelar</button>
+      <button onclick="document.getElementById('m-avisar').style.display='none';showToast('Alerta enviada correctamente ✉️')" style="padding:8px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;background:var(--primary);color:#fff;border:none;font-family:inherit">✉️ Enviar alerta</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="cert-toast" style="position:fixed;bottom:24px;right:24px;background:#fff;border:1px solid #b7eb8f;border-radius:10px;padding:14px 18px;font-size:13px;font-weight:600;color:#237804;box-shadow:0 4px 20px rgba(0,0,0,.12);display:none;align-items:center;gap:8px;z-index:9999"></div>
+
+<script>
+function showCert(type,btn){document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));btn.classList.add('active')}
+
+function showToast(msg){
+  const t=document.getElementById('cert-toast');
+  t.textContent=msg;t.style.display='flex';
+  setTimeout(()=>t.style.display='none',3000);
+}
+
+function abrirActualizar(tipo,nombre,rfc,estado){
+  document.getElementById('act-subtitulo').textContent=tipo+' — '+nombre+' ('+rfc+')';
+  document.getElementById('act-tipo').value=tipo;
+  const banner=document.getElementById('act-alerta-banner');
+  if(estado==='vencida'){
+    banner.style.cssText='background:#fff2f0;border:1px solid #ffccc7;color:#a8071a;border-radius:8px;padding:9px 13px;font-size:12.5px;margin-bottom:16px';
+    banner.textContent='⚠️ Este certificado está vencido. Registra la nueva fecha de vencimiento tras renovarlo.';
+  } else {
+    banner.style.cssText='background:#e6f4ff;border:1px solid #91caff;color:#003eb3;border-radius:8px;padding:9px 13px;font-size:12.5px;margin-bottom:16px';
+    banner.textContent='ℹ️ Actualiza la fecha cuando renueves el certificado antes de su vencimiento.';
+  }
+  document.getElementById('m-actualizar').style.display='flex';
+}
+
+const correos={
+  'REYNA V. AVALOS ZACARÍAS':'reynavic@gmail.com',
+  'GABRIEL CANUL MOJE':'gabrielcmoje@gmail.com',
+  'JESSICA M. BARRIOS LEÓN':'yesmableon@gmail.com',
+  'MIRNA M. SOSA GÓMEZ':'mirna.sosa@gmail.com',
+  'JAIME CALDERÓN GUTIÉRREZ':'herreriacalderon232@gmail.com',
+  'ARMANDO CAMACHO ÁLVAREZ':'—',
+};
+
+function abrirAvisar(nombre,tipo){
+  document.getElementById('avisar-texto').textContent='Se notificará a '+nombre+' sobre el próximo vencimiento de su '+tipo+'.';
+  document.getElementById('avisar-correo').textContent=correos[nombre]||'Sin correo registrado';
+  document.getElementById('m-avisar').style.display='flex';
+}
+</script>
+</body></html>

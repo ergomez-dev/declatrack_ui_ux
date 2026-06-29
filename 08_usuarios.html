@@ -1,0 +1,198 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>DECLATRACK — Usuarios</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1677ff;--primary-bg:#e6f4ff;--success:#52c41a;--error:#ff4d4f;--text-main:#0a0f1e;--text-secondary:#5a6171;--text-muted:#9aa3b0;--border:#dde1e7;--bg-page:#f0f4f8;--bg-card:#fff;--sidebar-w:220px;--topbar-h:56px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-page);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0}
+.sl{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}.li{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),#4096ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}.lt{font-size:15px;font-weight:700}
+.tb{margin:12px 14px;background:linear-gradient(135deg,#fff7e6,#fffbe6);border:1px solid #ffd666;border-radius:8px;padding:8px 12px}.tn{font-size:12px;font-weight:600;color:#874d00}.tp{display:inline-block;margin-top:2px;font-size:10px;background:#ffc53d;color:#613400;padding:1px 7px;border-radius:10px;font-weight:600}
+.nav{padding:8px 0;flex:1}.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-left:3px solid transparent;transition:all .15s;text-decoration:none}.ni:hover{background:#f5f7fa}.ni.active{color:var(--primary);background:var(--primary-bg);border-left-color:var(--primary)}.ns{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;padding:14px 20px 4px}
+.sf{padding:12px 14px;border-top:1px solid var(--border)}.uc{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px}.av{width:30px;height:30px;background:var(--primary);border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.un{font-size:12.5px;font-weight:600}.ur{font-size:11px;color:var(--text-muted)}
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;z-index:99}
+.tt{font-size:16px;font-weight:700;flex:1}
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:24px;flex:1}
+.ph{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}.ph h2{font-size:20px;font-weight:700}.ph p{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.btn{padding:8px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px}.btn-primary{background:var(--primary);color:#fff}
+.card{background:var(--bg-card);border-radius:10px;border:1px solid var(--border);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:#fafbfc;white-space:nowrap}
+td{padding:12px 14px;border-bottom:1px solid #f0f2f5;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafbfc}
+.user-cell{display:flex;align-items:center;gap:10px}
+.av-lg{width:36px;height:36px;border-radius:50%;color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.role-badge{padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600}
+.r-admin{background:#f9f0ff;color:#531dab;border:1px solid #d3adf7}
+.r-gestor{background:#e6f4ff;color:#003eb3;border:1px solid #91caff}
+.r-viewer{background:#fafafa;color:#595959;border:1px solid #d9d9d9}
+.status-dot{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%}.dot-g{background:var(--success)}.dot-r{background:var(--error)}
+.btn-sm{padding:4px 10px;font-size:12px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;font-weight:500;color:var(--text-secondary)}.btn-sm:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm-red{border-color:#ffccc7;color:#cf1322;background:#fff2f0}
+.modal-bg{position:fixed;inset:0;background:rgba(10,15,30,.5);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:14px;width:440px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:16px;font-weight:700}.modal-close{width:28px;height:28px;border-radius:6px;border:none;background:#f5f7fa;cursor:pointer;font-size:16px}
+.modal-body{padding:20px 24px}
+.form-group{margin-bottom:14px}
+label{display:block;font-size:12.5px;font-weight:500;margin-bottom:5px}
+input,select.full{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none}
+input:focus,select.full:focus{border-color:var(--primary)}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.btn-default{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sl"><div class="li">📋</div><span class="lt">DECLATRACK</span></div>
+  <div class="tb"><div class="tn">Despacho Contable Demo S.C.</div><span class="tp">PRO</span></div>
+  <nav class="nav">
+    <span class="ns">General</span>
+    <a class="ni" href="02_dashboard.html">📊 Dashboard</a>
+    <a class="ni" href="03_contribuyentes.html">👥 Contribuyentes</a>
+    <a class="ni" href="05_declaraciones.html">📄 Declaraciones</a>
+    <a class="ni" href="06_certificados.html">🔐 Certificados</a>
+    <a class="ni" href="07_plataformas.html">🌐 Plataformas</a>
+    <span class="ns">Administración</span>
+    <a class="ni active">👤 Usuarios</a>
+    <a class="ni" href="10_config.html">⚙️ Configuración</a>
+  </nav>
+  <div class="sf"><div class="uc"><div class="av">A</div><div><div class="un">Administrador</div><div class="ur">ADMIN</div></div></div></div>
+</aside>
+<header class="topbar"><div class="tt">Usuarios del despacho</div></header>
+<main class="main">
+  <div class="ph">
+    <div><h2>Usuarios</h2><p>Gestión de acceso al sistema para este despacho</p></div>
+    <button class="btn btn-primary" onclick="document.getElementById('modal').classList.add('show')">＋ Nuevo usuario</button>
+  </div>
+  <div class="card">
+    <table>
+      <thead><tr><th>Usuario</th><th>Correo</th><th>Rol</th><th>Estado</th><th>Último acceso</th><th>Acciones</th></tr></thead>
+      <tbody>
+        <tr><td><div class="user-cell"><div class="av-lg" style="background:#722ed1">A</div><div><div style="font-weight:600;font-size:13.5px">Administrador Sistema</div><div style="font-size:11px;color:var(--text-muted)">Cuenta principal</div></div></div></td><td style="font-size:13px">admin@despacho-demo.com</td><td><span class="role-badge r-admin">ADMIN</span></td><td><span class="status-dot"><span class="dot dot-g"></span>Activo</span></td><td style="font-size:12px;color:var(--text-muted)">Hoy 14:32</td><td><button class="btn-sm" onclick="abrirEditar('Administrador Sistema','admin@despacho-demo.com','ADMIN')">✏️ Editar</button></td></tr>
+        <tr><td><div class="user-cell"><div class="av-lg" style="background:#1677ff">G</div><div><div style="font-weight:600;font-size:13.5px">Gestor Prueba</div><div style="font-size:11px;color:var(--text-muted)">Operativo</div></div></div></td><td style="font-size:13px">gestor@despacho-demo.com</td><td><span class="role-badge r-gestor">GESTOR</span></td><td><span class="status-dot"><span class="dot dot-g"></span>Activo</span></td><td style="font-size:12px;color:var(--text-muted)">Hoy 10:15</td><td><div style="display:flex;gap:6px"><button class="btn-sm" onclick="abrirEditar('Gestor Prueba','gestor@despacho-demo.com','GESTOR')">✏️ Editar</button><button class="btn-sm" onclick="abrirReset('Gestor Prueba','gestor@despacho-demo.com')">🔑 Reset pwd</button><button class="btn-sm btn-sm-red" onclick="abrirDesactivar('Gestor Prueba')">🚫 Desactivar</button></div></td></tr>
+        <tr><td><div class="user-cell"><div class="av-lg" style="background:#52c41a">V</div><div><div style="font-weight:600;font-size:13.5px">Viewer Solo Lectura</div><div style="font-size:11px;color:var(--text-muted)">Consultas</div></div></div></td><td style="font-size:13px">viewer@despacho-demo.com</td><td><span class="role-badge r-viewer">VIEWER</span></td><td><span class="status-dot"><span class="dot dot-r"></span>Inactivo</span></td><td style="font-size:12px;color:var(--text-muted)">25/jun/2026</td><td><div style="display:flex;gap:6px"><button class="btn-sm" onclick="abrirEditar('Viewer Solo Lectura','viewer@despacho-demo.com','VIEWER')">✏️ Editar</button><button class="btn-sm" style="background:#f6ffed;border-color:#b7eb8f;color:#237804" onclick="showToast('Usuario reactivado ✅')">✅ Activar</button></div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</main>
+<!-- ═══ MODAL: NUEVO USUARIO ═══ -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title">Nuevo usuario</span><button class="modal-close" onclick="document.getElementById('modal').classList.remove('show')">✕</button></div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nombre completo *</label><input placeholder="Nombre del usuario"></div>
+      <div class="form-group"><label>Correo electrónico *</label><input type="email" placeholder="correo@despacho.com"></div>
+      <div class="form-group"><label>Contraseña inicial *</label><input type="password" placeholder="Mínimo 8 caracteres"></div>
+      <div class="form-group"><label>Rol *</label><select class="full"><option>GESTOR</option><option>VIEWER</option><option>ADMIN</option></select></div>
+      <div style="background:#f5f7fa;border-radius:8px;padding:9px 13px;font-size:12px;color:var(--text-secondary);margin-top:4px">ℹ️ El rol SUPERADMIN no puede asignarse desde aquí. Solo la plataforma puede designar superadmins.</div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-default" onclick="document.getElementById('modal').classList.remove('show')">Cancelar</button><button class="btn btn-primary" onclick="document.getElementById('modal').classList.remove('show');showToast('Usuario creado correctamente ✅')">Crear usuario</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDITAR USUARIO ═══ -->
+<div class="modal-bg" id="m-editar-usr">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">✏️ Editar usuario</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="edit-usr-email"></div>
+      </div>
+      <button class="modal-close" onclick="document.getElementById('m-editar-usr').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group"><label>Nombre completo *</label><input id="edit-usr-nombre" placeholder="Nombre del usuario"></div>
+      <div class="form-group"><label>Correo electrónico *</label><input id="edit-usr-correo" type="email"></div>
+      <div class="form-group"><label>Rol *</label>
+        <select id="edit-usr-rol" class="full"><option>GESTOR</option><option>VIEWER</option><option>ADMIN</option></select>
+      </div>
+      <div class="form-group" style="display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+        <div><div style="font-size:13.5px;font-weight:500">Estado activo</div><div style="font-size:11.5px;color:var(--text-muted)">Deshabilitar evita el acceso al sistema</div></div>
+        <div style="width:40px;height:22px;background:var(--success);border-radius:11px;position:relative;cursor:pointer" id="edit-sw" onclick="this.style.background=this.style.background.includes('52')?'#d9d9d9':'#52c41a';this.querySelector('div').style.right=this.style.background.includes('52')?'auto':'2px';this.querySelector('div').style.left=this.style.background.includes('52')?'2px':'auto'"><div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="document.getElementById('m-editar-usr').classList.remove('show')">Cancelar</button>
+      <button class="btn btn-primary" onclick="document.getElementById('m-editar-usr').classList.remove('show');showToast('Usuario actualizado correctamente ✅')">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: RESET CONTRASEÑA ═══ -->
+<div class="modal-bg" id="m-reset">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-header">
+      <span class="modal-title">🔑 Restablecer contraseña</span>
+      <button class="modal-close" onclick="document.getElementById('m-reset').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div style="text-align:center;padding:4px 0 12px">
+        <div style="font-size:32px;margin-bottom:10px">🔑</div>
+        <p style="font-size:13.5px;font-weight:600;margin-bottom:6px" id="reset-nombre-texto"></p>
+        <p style="font-size:12.5px;color:var(--text-secondary)">Define una nueva contraseña temporal. El usuario deberá cambiarla en su próximo acceso.</p>
+      </div>
+      <div class="form-group"><label>Nueva contraseña *</label>
+        <div style="position:relative">
+          <input type="password" id="reset-pw1" placeholder="Mínimo 8 caracteres" style="width:100%;padding:8px 36px 8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+          <button onclick="const i=document.getElementById('reset-pw1');i.type=i.type==='password'?'text':'password'" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-muted)">👁</button>
+        </div>
+      </div>
+      <div class="form-group"><label>Confirmar contraseña *</label>
+        <input type="password" id="reset-pw2" placeholder="Repetir contraseña" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="document.getElementById('m-reset').classList.remove('show')">Cancelar</button>
+      <button class="btn btn-primary" onclick="document.getElementById('m-reset').classList.remove('show');showToast('Contraseña restablecida correctamente 🔑')">Restablecer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: CONFIRMAR DESACTIVAR ═══ -->
+<div class="modal-bg" id="m-desactivar">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <span class="modal-title">⚠️ Desactivar usuario</span>
+      <button class="modal-close" onclick="document.getElementById('m-desactivar').classList.remove('show')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:24px">
+      <div style="font-size:40px;margin-bottom:12px">🚫</div>
+      <p style="font-size:14px;font-weight:600;margin-bottom:8px">¿Desactivar a <span id="desactivar-nombre" style="color:var(--error)"></span>?</p>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.5">El usuario perderá acceso inmediatamente. Podrás reactivarlo en cualquier momento.</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="document.getElementById('m-desactivar').classList.remove('show')">Cancelar</button>
+      <button class="btn" style="background:var(--error);color:#fff" onclick="document.getElementById('m-desactivar').classList.remove('show');showToast('Usuario desactivado ✅')">Sí, desactivar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="usr-toast" style="position:fixed;bottom:24px;right:24px;background:#fff;border:1px solid #b7eb8f;border-radius:10px;padding:14px 18px;font-size:13px;font-weight:600;color:#237804;box-shadow:0 4px 20px rgba(0,0,0,.12);display:none;align-items:center;gap:8px;z-index:9999"></div>
+
+<script>
+function showToast(msg){
+  const t=document.getElementById('usr-toast');
+  t.textContent=msg;t.style.display='flex';
+  setTimeout(()=>t.style.display='none',3000);
+}
+function abrirEditar(nombre,correo,rol){
+  document.getElementById('edit-usr-nombre').value=nombre;
+  document.getElementById('edit-usr-correo').value=correo;
+  document.getElementById('edit-usr-email').textContent=correo;
+  const sel=document.getElementById('edit-usr-rol');
+  for(let o of sel.options) o.selected=o.value===rol||o.text===rol;
+  document.getElementById('m-editar-usr').classList.add('show');
+}
+function abrirReset(nombre,correo){
+  document.getElementById('reset-nombre-texto').textContent='Restablecer contraseña de: '+nombre;
+  document.getElementById('m-reset').classList.add('show');
+}
+function abrirDesactivar(nombre){
+  document.getElementById('desactivar-nombre').textContent=nombre;
+  document.getElementById('m-desactivar').classList.add('show');
+}
+</script>
+</body></html>

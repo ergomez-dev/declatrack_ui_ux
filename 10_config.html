@@ -1,0 +1,189 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>DECLATRACK — Configuración del Despacho</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1677ff;--primary-bg:#e6f4ff;--success:#52c41a;--text-main:#0a0f1e;--text-secondary:#5a6171;--text-muted:#9aa3b0;--border:#dde1e7;--bg-page:#f0f4f8;--bg-card:#fff;--sidebar-w:220px;--topbar-h:56px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-page);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0}
+.sl{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}.li{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),#4096ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all .3s}.lt{font-size:15px;font-weight:700}
+.tb{margin:12px 14px;background:linear-gradient(135deg,#fff7e6,#fffbe6);border:1px solid #ffd666;border-radius:8px;padding:8px 12px}.tn{font-size:12px;font-weight:600;color:#874d00}.tp{display:inline-block;margin-top:2px;font-size:10px;background:#ffc53d;color:#613400;padding:1px 7px;border-radius:10px;font-weight:600}
+.nav{padding:8px 0;flex:1}.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-left:3px solid transparent;transition:all .15s;text-decoration:none}.ni:hover{background:#f5f7fa}.ni.active{color:var(--primary);background:var(--primary-bg);border-left-color:var(--primary)}.ns{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;padding:14px 20px 4px}
+.sf{padding:12px 14px;border-top:1px solid var(--border)}.uc{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px}.av{width:30px;height:30px;background:var(--primary);border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.un{font-size:12.5px;font-weight:600}.ur{font-size:11px;color:var(--text-muted)}
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;z-index:99}
+.tt{font-size:16px;font-weight:700;flex:1}
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:24px;flex:1}
+.ph{margin-bottom:20px}.ph h2{font-size:20px;font-weight:700}.ph p{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.config-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.card{background:var(--bg-card);border-radius:10px;border:1px solid var(--border);overflow:hidden;margin-bottom:16px}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:700;display:flex;align-items:center;gap:8px}
+.card-body{padding:20px 18px}
+.form-group{margin-bottom:18px}
+label{display:block;font-size:12.5px;font-weight:600;margin-bottom:6px;color:var(--text-main)}
+.form-hint{font-size:11.5px;color:var(--text-muted);margin-top:4px}
+input,select.full{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none;color:var(--text-main)}
+input:focus,select.full:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,119,255,.1)}
+input[type=number]{max-width:120px}
+.color-row{display:flex;align-items:center;gap:12px}
+.color-preview{width:40px;height:40px;border-radius:8px;border:1px solid var(--border);flex-shrink:0;transition:background .2s}
+input[type=color]{width:40px;height:40px;border-radius:8px;border:1px solid var(--border);padding:2px;cursor:pointer}
+.switch-row{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #f0f2f5}
+.switch-row:last-child{border-bottom:none}
+.switch-label{font-size:13.5px;font-weight:500}
+.switch-hint{font-size:12px;color:var(--text-muted);margin-top:1px}
+.sw{width:40px;height:22px;background:#d9d9d9;border-radius:11px;position:relative;cursor:pointer;flex-shrink:0;transition:.2s}.sw.on{background:var(--primary)}.sw::after{content:'';width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}.sw.on::after{left:20px}
+.btn{padding:9px 18px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:#0958d9}
+.save-bar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--border);padding:14px 24px;display:flex;justify-content:flex-end;gap:10px;margin:-24px -24px 0;margin-top:8px}
+.success-toast{position:fixed;bottom:24px;right:24px;background:#fff;border:1px solid #b7eb8f;border-radius:10px;padding:14px 18px;font-size:13px;font-weight:600;color:#237804;box-shadow:0 4px 20px rgba(0,0,0,.12);display:none;align-items:center;gap:8px;z-index:9999}
+.success-toast.show{display:flex}
+.sidebar-preview{background:#0d1b4b;border-radius:8px;padding:12px;margin-top:8px}
+.sp-item{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;font-size:12px;color:rgba(255,255,255,.7);margin-bottom:2px}
+.sp-item.active{color:#fff;font-weight:600}
+.sp-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sl"><div class="li" id="sidebar-icon">📋</div><span class="lt">DECLATRACK</span></div>
+  <div class="tb"><div class="tn">Despacho Contable Demo S.C.</div><span class="tp">PRO</span></div>
+  <nav class="nav">
+    <span class="ns">General</span>
+    <a class="ni" href="02_dashboard.html">📊 Dashboard</a>
+    <a class="ni" href="03_contribuyentes.html">👥 Contribuyentes</a>
+    <a class="ni" href="05_declaraciones.html">📄 Declaraciones</a>
+    <a class="ni" href="06_certificados.html">🔐 Certificados</a>
+    <a class="ni" href="07_plataformas.html">🌐 Plataformas</a>
+    <span class="ns">Administración</span>
+    <a class="ni" href="08_usuarios.html">👤 Usuarios</a>
+    <a class="ni active">⚙️ Configuración</a>
+  </nav>
+  <div class="sf"><div class="uc"><div class="av">A</div><div><div class="un">Administrador</div><div class="ur">ADMIN</div></div></div></div>
+</aside>
+<header class="topbar"><div class="tt">Configuración del despacho</div></header>
+<main class="main">
+  <div class="ph"><h2>Configuración</h2><p>Personaliza el comportamiento y apariencia del sistema para tu despacho</p></div>
+  <div class="config-grid">
+    <!-- ALERTAS -->
+    <div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">⏰ Alertas de vencimiento</span></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Días de aviso — E.firma</label>
+            <input type="number" id="dias-efirma" value="30" min="1" max="90">
+            <div class="form-hint">Alertar cuando la e.firma venza en X días</div>
+          </div>
+          <div class="form-group">
+            <label>Días de aviso — CSD</label>
+            <input type="number" id="dias-csd" value="30" min="1" max="90">
+            <div class="form-hint">Alertar cuando el CSD venza en X días</div>
+          </div>
+          <div class="form-group">
+            <label>Días de aviso — Anuncios y permisos</label>
+            <input type="number" id="dias-anuncio" value="15" min="1" max="60">
+            <div class="form-hint">Para licencias, extintores, protección civil</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">🌐 Idioma y zona horaria</span></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Idioma por defecto</label>
+            <select class="full"><option value="es" selected>🇲🇽 Español</option><option value="en">🇺🇸 English</option></select>
+          </div>
+          <div class="form-group">
+            <label>Zona horaria</label>
+            <select class="full">
+              <option selected>America/Mexico_City (UTC-6)</option>
+              <option>America/Cancun (UTC-5)</option>
+              <option>America/Monterrey (UTC-6)</option>
+              <option>America/Tijuana (UTC-7)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- VISUAL + NOTIF -->
+    <div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">🎨 Apariencia</span></div>
+        <div class="card-body">
+          <div class="form-group">
+            <label>Color primario del despacho</label>
+            <div class="color-row">
+              <input type="color" id="color-picker" value="#1677ff" oninput="previewColor(this.value)">
+              <input type="text" id="color-text" value="#1677ff" style="max-width:120px;font-family:monospace" oninput="syncColor(this.value)">
+              <div class="color-preview" id="color-preview" style="background:#1677ff"></div>
+            </div>
+            <div class="form-hint">Se aplica al sidebar, botones y acentos. Cambia en tiempo real.</div>
+          </div>
+          <div class="form-group">
+            <label>Vista previa del sidebar</label>
+            <div class="sidebar-preview">
+              <div class="sp-item" style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+                <div style="width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px" id="preview-icon-bg">📋</div>
+                <span style="color:#fff;font-weight:700;font-size:12px">DECLATRACK</span>
+              </div>
+              <div class="sp-item active" id="preview-active"><div class="sp-dot" id="preview-dot" style="background:#1677ff"></div>📊 Dashboard</div>
+              <div class="sp-item"><div class="sp-dot" style="background:rgba(255,255,255,.2)"></div>👥 Contribuyentes</div>
+              <div class="sp-item"><div class="sp-dot" style="background:rgba(255,255,255,.2)"></div>📄 Declaraciones</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header"><span class="card-title">✉️ Notificaciones</span></div>
+        <div class="card-body">
+          <div class="switch-row">
+            <div><div class="switch-label">Notificaciones por correo</div><div class="switch-hint">Recibir alertas de vencimiento por email</div></div>
+            <div class="sw" id="notif-sw" onclick="toggleSwitch(this,'email-row')"></div>
+          </div>
+          <div id="email-row" style="display:none;margin-top:12px">
+            <div class="form-group">
+              <label>Correo para notificaciones</label>
+              <input type="email" placeholder="notificaciones@despacho.com">
+            </div>
+          </div>
+          <div class="switch-row" style="margin-top:8px">
+            <div><div class="switch-label">Alertas en dashboard</div><div class="switch-hint">Mostrar panel de urgentes en inicio</div></div>
+            <div class="sw on" onclick="toggleSwitch(this,null)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="save-bar">
+    <button class="btn" style="background:#f5f7fa;border:1px solid var(--border);color:var(--text-secondary)">Descartar cambios</button>
+    <button class="btn btn-primary" onclick="saveConfig()">💾 Guardar configuración</button>
+  </div>
+</main>
+
+<div class="success-toast" id="toast">✅ Configuración guardada correctamente</div>
+
+<script>
+function previewColor(v){
+  document.getElementById('color-text').value=v;
+  document.getElementById('color-preview').style.background=v;
+  document.getElementById('preview-dot').style.background=v;
+  document.querySelector('.li').style.background=`linear-gradient(135deg,${v},${v}dd)`;
+  document.querySelector('.btn-primary').style.background=v;
+}
+function syncColor(v){
+  if(/^#[0-9a-f]{6}$/i.test(v)){
+    document.getElementById('color-picker').value=v;
+    previewColor(v);
+  }
+}
+function toggleSwitch(sw,targetId){
+  sw.classList.toggle('on');
+  if(targetId){document.getElementById(targetId).style.display=sw.classList.contains('on')?'block':'none'}
+}
+function saveConfig(){
+  const toast=document.getElementById('toast');
+  toast.classList.add('show');
+  setTimeout(()=>toast.classList.remove('show'),3000);
+}
+</script>
+</body></html>

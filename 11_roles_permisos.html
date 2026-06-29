@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DECLATRACK — Roles y Permisos</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --primary:#1677ff;--primary-bg:#e6f4ff;--success:#52c41a;--success-bg:#f6ffed;
+  --error:#ff4d4f;--error-bg:#fff2f0;--warning:#faad14;--warning-bg:#fffbe6;
+  --purple:#722ed1;--purple-bg:#f9f0ff;
+  --text-main:#0a0f1e;--text-secondary:#5a6171;--text-muted:#9aa3b0;
+  --border:#dde1e7;--bg-page:#f0f4f8;--bg-card:#fff;
+  --sidebar-w:220px;--topbar-h:56px
+}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-page);color:var(--text-main);display:flex;min-height:100vh}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:100}
+.sidebar-logo{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),#4096ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.logo-text{font-size:15px;font-weight:700;color:var(--text-main)}
+.tenant-badge{margin:12px 14px;background:linear-gradient(135deg,#fff7e6,#fffbe6);border:1px solid #ffd666;border-radius:8px;padding:8px 12px}
+.tenant-name{font-size:12px;font-weight:600;color:#874d00}
+.tenant-plan{display:inline-block;margin-top:2px;font-size:10px;background:#ffc53d;color:#613400;padding:1px 7px;border-radius:10px;font-weight:600}
+.nav{padding:8px 0;flex:1}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-left:3px solid transparent;transition:all .15s;text-decoration:none}
+.nav-item:hover{background:#f5f7fa;color:var(--text-main)}
+.nav-item.active{color:var(--primary);background:var(--primary-bg);border-left-color:var(--primary)}
+.nav-section{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;padding:14px 20px 4px}
+.sidebar-footer{padding:12px 14px;border-top:1px solid var(--border)}
+.user-chip{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px;cursor:pointer}
+.avatar{width:30px;height:30px;background:var(--primary);border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.user-name{font-size:12.5px;font-weight:600}.user-role{font-size:11px;color:var(--text-muted)}
+
+/* ── TOPBAR ── */
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;z-index:99}
+.topbar-title{font-size:16px;font-weight:700;flex:1}
+.topbar-title span{font-size:13px;font-weight:400;color:var(--text-muted)}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:24px;flex:1}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px}
+.page-header h2{font-size:20px;font-weight:700}
+.page-header p{font-size:13px;color:var(--text-secondary);margin-top:2px}
+
+/* ── TABS PRINCIPALES ── */
+.main-tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:24px;gap:0}
+.main-tab{padding:10px 22px;font-size:14px;font-weight:500;color:var(--text-secondary);cursor:pointer;border:none;background:transparent;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:7px}
+.main-tab:hover{color:var(--text-main);background:#f5f7fa}
+.main-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+.tab-pane{display:none}.tab-pane.active{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--bg-card);border-radius:10px;border:1px solid var(--border);overflow:hidden}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:600;display:flex;align-items:center;gap:8px}
+.card-body{padding:18px}
+
+/* ── BUTTONS ── */
+.btn{padding:8px 16px;border-radius:8px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:#0958d9}
+.btn-default{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}.btn-default:hover{background:#f5f7fa}
+.btn-danger{background:var(--error-bg);color:#a8071a;border:1px solid #ffccc7}
+.btn-sm{padding:4px 10px;font-size:12px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;font-weight:500;color:var(--text-secondary);transition:all .15s}
+.btn-sm:hover{border-color:var(--primary);color:var(--primary)}
+.btn-sm-danger{border-color:#ffccc7;color:#a8071a;background:var(--error-bg)}
+
+/* ── ROLES GRID ── */
+.roles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:24px}
+.role-card{background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:box-shadow .2s}
+.role-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08)}
+.role-card-header{padding:14px 16px;display:flex;align-items:flex-start;justify-content:space-between}
+.role-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.role-name{font-size:14px;font-weight:700;margin-bottom:3px}
+.role-desc{font-size:12px;color:var(--text-secondary);line-height:1.4}
+.role-badge-count{font-size:11px;font-weight:600;padding:2px 8px;border-radius:20px}
+.role-perms-preview{padding:0 16px 14px;display:flex;flex-wrap:wrap;gap:5px}
+.perm-chip{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;background:#f5f7fa;color:var(--text-secondary);border:1px solid #e8e8e8}
+.perm-chip.allowed{background:#f6ffed;color:#237804;border-color:#b7eb8f}
+.perm-chip.denied{background:var(--error-bg);color:#a8071a;border-color:#ffccc7;text-decoration:line-through;opacity:.7}
+.role-actions{padding:12px 16px;border-top:1px solid var(--border);display:flex;gap:6px;background:#fafbfc}
+.role-system-badge{font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;background:#f5f7fa;color:var(--text-muted);border:1px solid var(--border)}
+
+/* ── PERMISOS MATRIX TABLE ── */
+.matrix-wrap{overflow-x:auto}
+.matrix-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.matrix-table th{padding:10px 14px;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;border-bottom:2px solid var(--border);white-space:nowrap;background:#fafbfc;text-align:center}
+.matrix-table th.module-col{text-align:left;min-width:160px}
+.matrix-table th.action-col{min-width:80px}
+.matrix-table td{padding:9px 14px;border-bottom:1px solid #f0f2f5;vertical-align:middle;text-align:center}
+.matrix-table td.module-cell{text-align:left}
+.matrix-table tr:last-child td{border-bottom:none}
+.matrix-table tr:hover td{background:#fafbfc}
+.matrix-table .module-group td{background:#f8f9fa;font-weight:700;font-size:11.5px;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.4px;padding:7px 14px}
+.perm-toggle{width:22px;height:22px;border-radius:50%;border:none;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;margin:0 auto;transition:all .15s}
+.perm-toggle.on{background:var(--success-bg);color:var(--success);border:1px solid #b7eb8f}
+.perm-toggle.off{background:var(--error-bg);color:var(--error);border:1px solid #ffccc7}
+.perm-toggle.na{background:#f5f7fa;color:var(--text-muted);border:1px solid #e8e8e8;cursor:not-allowed}
+.role-col-header{display:flex;flex-direction:column;align-items:center;gap:4px}
+.role-col-dot{width:8px;height:8px;border-radius:50%}
+
+/* ── USUARIOS TABLE ── */
+table.usr-table{width:100%;border-collapse:collapse;font-size:13px}
+table.usr-table th{text-align:left;padding:9px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:#fafbfc;white-space:nowrap}
+table.usr-table td{padding:11px 14px;border-bottom:1px solid #f0f2f5;vertical-align:middle}
+table.usr-table tr:last-child td{border-bottom:none}
+table.usr-table tr:hover td{background:#fafbfc}
+.user-cell{display:flex;align-items:center;gap:10px}
+.av-md{width:32px;height:32px;border-radius:50%;color:#fff;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600}
+.b-admin{background:var(--purple-bg);color:#531dab;border:1px solid #d3adf7}
+.b-gestor{background:var(--primary-bg);color:#003eb3;border:1px solid #91caff}
+.b-viewer{background:#fafafa;color:#595959;border:1px solid #d9d9d9}
+.b-custom{background:#fff7e6;color:#873800;border:1px solid #ffd591}
+.perm-tags{display:flex;gap:4px;flex-wrap:wrap}
+.ptag{font-size:10.5px;padding:1px 6px;border-radius:3px;border:1px solid;font-weight:500}
+.ptag-green{background:#f6ffed;color:#237804;border-color:#b7eb8f}
+.ptag-red{background:var(--error-bg);color:#a8071a;border-color:#ffccc7}
+.ptag-blue{background:var(--primary-bg);color:#003eb3;border-color:#91caff}
+.status-dot{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500}
+.dot{width:7px;height:7px;border-radius:50%}
+.dot-g{background:var(--success)}.dot-r{background:var(--error)}
+
+/* ── MODAL ── */
+.modal-bg{position:fixed;inset:0;background:rgba(10,15,30,.5);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px)}
+.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:14px;width:680px;max-width:96vw;max-height:92vh;overflow-y:auto;box-shadow:0 24px 64px rgba(0,0,0,.22)}
+.modal-sm{width:440px}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;position:sticky;top:0;background:#fff;z-index:1}
+.modal-title{font-size:16px;font-weight:700}
+.modal-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px}
+.modal-close{width:28px;height:28px;border-radius:6px;border:none;background:#f5f7fa;cursor:pointer;font-size:15px;flex-shrink:0}
+.modal-body{padding:20px 24px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;position:sticky;bottom:0;background:#fff}
+
+/* ── FORM ── */
+.form-group{margin-bottom:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label.lbl{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px;color:var(--text-main)}
+input.inp,select.sel,textarea.txta{width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none;color:var(--text-main)}
+input.inp:focus,select.sel:focus,textarea.txta:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(22,119,255,.1)}
+textarea.txta{resize:vertical;min-height:64px}
+
+/* ── PERMISOS EDITOR (dentro del modal) ── */
+.perm-section{margin-bottom:16px}
+.perm-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);margin-bottom:8px;padding-bottom:5px;border-bottom:1px solid var(--border)}
+.perm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px}
+.perm-item{display:flex;align-items:center;justify-content:space-between;padding:7px 10px;border-radius:7px;border:1px solid var(--border);background:#fafbfc;cursor:pointer;transition:all .15s}
+.perm-item:hover{border-color:var(--primary);background:var(--primary-bg)}
+.perm-item.checked{background:var(--success-bg);border-color:#b7eb8f}
+.perm-item-label{font-size:12.5px;font-weight:500;display:flex;align-items:center;gap:6px}
+.perm-cb{width:16px;height:16px;border-radius:3px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;background:#fff;transition:all .15s}
+.perm-item.checked .perm-cb{background:var(--success);border-color:var(--success);color:#fff}
+
+/* ── USUARIO PERMS OVERRIDE ── */
+.override-section{background:#fff7e6;border:1px solid #ffd591;border-radius:8px;padding:12px 14px;margin-bottom:14px}
+.override-title{font-size:12px;font-weight:700;color:#873800;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.override-desc{font-size:12px;color:#ad6800;margin-bottom:10px}
+.override-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:5px}
+.override-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:6px;background:#fff;border:1px solid #ffe58f;cursor:pointer;font-size:12px;font-weight:500;color:var(--text-secondary)}
+.override-item.grant{color:var(--success)}
+.override-item.revoke{color:var(--error);text-decoration:line-through}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#fff;border:1px solid #b7eb8f;border-radius:10px;padding:13px 18px;font-size:13px;font-weight:600;color:#237804;box-shadow:0 4px 20px rgba(0,0,0,.12);display:none;align-items:center;gap:8px;z-index:9999}
+.toast.show{display:flex}
+
+/* ── CHIPS ── */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:11.5px;font-weight:600}
+.chip-system{background:#f5f7fa;color:var(--text-muted);border:1px solid var(--border)}
+.chip-custom{background:#fff7e6;color:#873800;border:1px solid #ffd591}
+.info-bar{background:var(--primary-bg);border:1px solid #91caff;border-radius:8px;padding:9px 14px;font-size:13px;color:#003eb3;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px}
+</style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">📋</div><span class="logo-text">DECLATRACK</span></div>
+  <div class="tenant-badge"><div class="tenant-name">Despacho Contable Demo S.C.</div><span class="tenant-plan">PRO</span></div>
+  <nav class="nav">
+    <span class="nav-section">General</span>
+    <a class="nav-item" href="02_dashboard.html"><span>📊</span> Dashboard</a>
+    <a class="nav-item" href="03_contribuyentes.html"><span>👥</span> Contribuyentes</a>
+    <a class="nav-item" href="05_declaraciones.html"><span>📄</span> Declaraciones</a>
+    <a class="nav-item" href="06_certificados.html"><span>🔐</span> Certificados</a>
+    <a class="nav-item" href="07_plataformas.html"><span>🌐</span> Plataformas</a>
+    <span class="nav-section">Administración</span>
+    <a class="nav-item" href="08_usuarios.html"><span>👤</span> Usuarios</a>
+    <a class="nav-item active"><span>🛡️</span> Roles y Permisos</a>
+    <a class="nav-item" href="10_config.html"><span>⚙️</span> Configuración</a>
+  </nav>
+  <div class="sidebar-footer">
+    <div class="user-chip"><div class="avatar">A</div><div><div class="user-name">Administrador</div><div class="user-role">ADMIN</div></div></div>
+  </div>
+</aside>
+
+<!-- ═══ TOPBAR ═══ -->
+<header class="topbar">
+  <div class="topbar-title">Roles y Permisos <span>/ Control de acceso granular</span></div>
+  <div style="display:flex;gap:8px">
+    <button class="btn btn-default" onclick="openModal('m-nuevo-rol')">＋ Nuevo rol</button>
+  </div>
+</header>
+
+<!-- ═══ MAIN ═══ -->
+<main class="main">
+  <div class="page-header">
+    <div>
+      <h2>Roles y Permisos</h2>
+      <p>Define qué puede ver y hacer cada rol — y ajusta permisos individuales por usuario</p>
+    </div>
+  </div>
+
+  <!-- TABS PRINCIPALES -->
+  <div class="main-tabs">
+    <button class="main-tab active" onclick="showPane('roles',this)">🛡️ Roles del despacho</button>
+    <button class="main-tab" onclick="showPane('matrix',this)">📊 Matriz de permisos</button>
+    <button class="main-tab" onclick="showPane('usuarios',this)">👤 Permisos por usuario</button>
+  </div>
+
+  <!-- ═══ PANE: ROLES ═══ -->
+  <div class="tab-pane active" id="pane-roles">
+    <div class="info-bar">
+      ℹ️ Los roles <strong>ADMIN, GESTOR y VIEWER</strong> son del sistema y no pueden eliminarse. Puedes crear roles personalizados adicionales para este despacho.
+    </div>
+
+    <div class="roles-grid">
+
+      <!-- ADMIN -->
+      <div class="role-card">
+        <div class="role-card-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="role-dot" style="background:#722ed1;width:12px;height:12px;margin-top:0"></div>
+            <div>
+              <div class="role-name">ADMIN</div>
+              <div class="role-desc">Acceso completo al despacho. Gestiona usuarios, roles y configuración.</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <span class="role-system-badge">Sistema</span>
+            <span class="role-badge-count" style="background:var(--purple-bg);color:#531dab;border:1px solid #d3adf7">2 usuarios</span>
+          </div>
+        </div>
+        <div class="role-perms-preview">
+          <span class="perm-chip allowed">Ver todo</span>
+          <span class="perm-chip allowed">Crear</span>
+          <span class="perm-chip allowed">Editar</span>
+          <span class="perm-chip allowed">Eliminar</span>
+          <span class="perm-chip allowed">Exportar</span>
+          <span class="perm-chip allowed">Gestionar usuarios</span>
+          <span class="perm-chip allowed">Gestionar roles</span>
+          <span class="perm-chip allowed">Ver contraseñas</span>
+          <span class="perm-chip allowed">Configuración</span>
+        </div>
+        <div class="role-actions">
+          <button class="btn-sm" onclick="openModal('m-ver-rol');setModalRol('ADMIN','#722ed1')">👁 Ver permisos</button>
+          <span style="font-size:11px;color:var(--text-muted);margin-left:auto;line-height:1">No se puede editar ni eliminar</span>
+        </div>
+      </div>
+
+      <!-- GESTOR -->
+      <div class="role-card">
+        <div class="role-card-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="role-dot" style="background:#1677ff;width:12px;height:12px;margin-top:0"></div>
+            <div>
+              <div class="role-name">GESTOR</div>
+              <div class="role-desc">Puede crear y editar registros. No gestiona usuarios ni configuración.</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <span class="role-system-badge">Sistema</span>
+            <span class="role-badge-count" style="background:var(--primary-bg);color:#003eb3;border:1px solid #91caff">1 usuario</span>
+          </div>
+        </div>
+        <div class="role-perms-preview">
+          <span class="perm-chip allowed">Ver todo</span>
+          <span class="perm-chip allowed">Crear</span>
+          <span class="perm-chip allowed">Editar</span>
+          <span class="perm-chip denied">Eliminar</span>
+          <span class="perm-chip allowed">Exportar</span>
+          <span class="perm-chip denied">Gestionar usuarios</span>
+          <span class="perm-chip denied">Gestionar roles</span>
+          <span class="perm-chip allowed">Ver contraseñas</span>
+          <span class="perm-chip denied">Configuración</span>
+        </div>
+        <div class="role-actions">
+          <button class="btn-sm" onclick="openModal('m-ver-rol');setModalRol('GESTOR','#1677ff')">👁 Ver permisos</button>
+          <span style="font-size:11px;color:var(--text-muted);margin-left:auto;line-height:1">No se puede editar ni eliminar</span>
+        </div>
+      </div>
+
+      <!-- VIEWER -->
+      <div class="role-card">
+        <div class="role-card-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="role-dot" style="background:#52c41a;width:12px;height:12px;margin-top:0"></div>
+            <div>
+              <div class="role-name">VIEWER</div>
+              <div class="role-desc">Solo lectura. Puede ver reportes y dashboards, sin modificar datos.</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <span class="role-system-badge">Sistema</span>
+            <span class="role-badge-count" style="background:#f6ffed;color:#237804;border:1px solid #b7eb8f">1 usuario</span>
+          </div>
+        </div>
+        <div class="role-perms-preview">
+          <span class="perm-chip allowed">Ver todo</span>
+          <span class="perm-chip denied">Crear</span>
+          <span class="perm-chip denied">Editar</span>
+          <span class="perm-chip denied">Eliminar</span>
+          <span class="perm-chip allowed">Exportar</span>
+          <span class="perm-chip denied">Gestionar usuarios</span>
+          <span class="perm-chip denied">Gestionar roles</span>
+          <span class="perm-chip denied">Ver contraseñas</span>
+          <span class="perm-chip denied">Configuración</span>
+        </div>
+        <div class="role-actions">
+          <button class="btn-sm" onclick="openModal('m-ver-rol');setModalRol('VIEWER','#52c41a')">👁 Ver permisos</button>
+          <span style="font-size:11px;color:var(--text-muted);margin-left:auto;line-height:1">No se puede editar ni eliminar</span>
+        </div>
+      </div>
+
+      <!-- ROL PERSONALIZADO: AUDITOR -->
+      <div class="role-card" style="border-color:#ffd591">
+        <div class="role-card-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div class="role-dot" style="background:#faad14;width:12px;height:12px;margin-top:0"></div>
+            <div>
+              <div class="role-name">AUDITOR</div>
+              <div class="role-desc">Solo puede consultar declaraciones y exportar reportes. Sin acceso a contraseñas.</div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <span class="chip chip-custom">Personalizado</span>
+            <span class="role-badge-count" style="background:#fff7e6;color:#873800;border:1px solid #ffd591">0 usuarios</span>
+          </div>
+        </div>
+        <div class="role-perms-preview">
+          <span class="perm-chip allowed">Ver declaraciones</span>
+          <span class="perm-chip allowed">Ver certificados</span>
+          <span class="perm-chip denied">Crear</span>
+          <span class="perm-chip denied">Editar</span>
+          <span class="perm-chip denied">Eliminar</span>
+          <span class="perm-chip allowed">Exportar</span>
+          <span class="perm-chip denied">Ver contraseñas</span>
+        </div>
+        <div class="role-actions">
+          <button class="btn-sm" onclick="openModal('m-ver-rol');setModalRol('AUDITOR','#faad14')">👁 Ver</button>
+          <button class="btn-sm" onclick="openModal('m-editar-rol');setModalRol('AUDITOR','#faad14')">✏️ Editar</button>
+          <button class="btn-sm btn-sm-danger" onclick="openModal('m-eliminar-rol');document.getElementById('del-rol-nombre').textContent='AUDITOR'">🗑 Eliminar</button>
+        </div>
+      </div>
+
+      <!-- AÑADIR ROL -->
+      <div class="role-card" style="border-style:dashed;border-color:#c4cdd6;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:180px;gap:10px" onclick="openModal('m-nuevo-rol')">
+        <div style="width:44px;height:44px;border-radius:50%;background:var(--primary-bg);display:flex;align-items:center;justify-content:center;font-size:22px;color:var(--primary)">＋</div>
+        <div style="font-size:14px;font-weight:600;color:var(--primary)">Nuevo rol personalizado</div>
+        <div style="font-size:12px;color:var(--text-muted);text-align:center;padding:0 20px">Combina permisos a medida para este despacho</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ PANE: MATRIZ ═══ -->
+  <div class="tab-pane" id="pane-matrix">
+    <div class="info-bar">📊 Vista de solo lectura. Para modificar permisos de un rol personalizado, ve a la pestaña <strong>Roles</strong> y haz clic en <strong>✏️ Editar</strong>.</div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Matriz de permisos por módulo</span>
+        <div style="display:flex;gap:8px;align-items:center">
+          <span style="font-size:12px;color:var(--text-muted)">Roles:</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px"><div style="width:8px;height:8px;border-radius:50%;background:#722ed1"></div>ADMIN</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px"><div style="width:8px;height:8px;border-radius:50%;background:#1677ff"></div>GESTOR</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px"><div style="width:8px;height:8px;border-radius:50%;background:#52c41a"></div>VIEWER</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px"><div style="width:8px;height:8px;border-radius:50%;background:#faad14"></div>AUDITOR</span>
+        </div>
+      </div>
+      <div class="matrix-wrap">
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th class="module-col">Módulo / Acción</th>
+              <th class="action-col"><div class="role-col-header"><div class="role-col-dot" style="background:#722ed1"></div>ADMIN</div></th>
+              <th class="action-col"><div class="role-col-header"><div class="role-col-dot" style="background:#1677ff"></div>GESTOR</div></th>
+              <th class="action-col"><div class="role-col-header"><div class="role-col-dot" style="background:#52c41a"></div>VIEWER</div></th>
+              <th class="action-col"><div class="role-col-header"><div class="role-col-dot" style="background:#faad14"></div>AUDITOR</div></th>
+            </tr>
+          </thead>
+          <tbody id="matrix-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ PANE: USUARIOS ═══ -->
+  <div class="tab-pane" id="pane-usuarios">
+    <div class="info-bar">⚙️ Aquí puedes <strong>otorgar o revocar permisos específicos a un usuario</strong> sin cambiar su rol base. Los overrides se aplican encima del rol asignado.</div>
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Permisos efectivos por usuario</span>
+        <span style="font-size:12px;color:var(--text-muted)">4 usuarios en este despacho</span>
+      </div>
+      <table class="usr-table">
+        <thead>
+          <tr><th>Usuario</th><th>Rol base</th><th>Overrides activos</th><th>Estado</th><th>Última modificación</th><th>Acciones</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="user-cell"><div class="av-md" style="background:#722ed1">A</div><div><div style="font-weight:600">Administrador Sistema</div><div style="font-size:11px;color:var(--text-muted)">admin@despacho-demo.com</div></div></div></td>
+            <td><span class="badge b-admin">ADMIN</span></td>
+            <td><span style="font-size:12px;color:var(--text-muted)">Sin overrides</span></td>
+            <td><span class="status-dot"><span class="dot dot-g"></span>Activo</span></td>
+            <td style="font-size:12px;color:var(--text-muted)">—</td>
+            <td><button class="btn-sm" onclick="openModal('m-usuario-perms');setUsuarioPerms('Administrador Sistema','ADMIN','#722ed1')">🔧 Ajustar</button></td>
+          </tr>
+          <tr>
+            <td><div class="user-cell"><div class="av-md" style="background:#1677ff">G</div><div><div style="font-weight:600">Gestor Prueba</div><div style="font-size:11px;color:var(--text-muted)">gestor@despacho-demo.com</div></div></div></td>
+            <td><span class="badge b-gestor">GESTOR</span></td>
+            <td>
+              <div class="perm-tags">
+                <span class="ptag ptag-green">+eliminar_declaraciones</span>
+                <span class="ptag ptag-red">-exportar</span>
+              </div>
+            </td>
+            <td><span class="status-dot"><span class="dot dot-g"></span>Activo</span></td>
+            <td style="font-size:12px;color:var(--text-muted)">Hoy 10:15</td>
+            <td><button class="btn-sm" onclick="openModal('m-usuario-perms');setUsuarioPerms('Gestor Prueba','GESTOR','#1677ff')">🔧 Ajustar</button></td>
+          </tr>
+          <tr>
+            <td><div class="user-cell"><div class="av-md" style="background:#52c41a">V</div><div><div style="font-weight:600">Viewer Solo Lectura</div><div style="font-size:11px;color:var(--text-muted)">viewer@despacho-demo.com</div></div></div></td>
+            <td><span class="badge b-viewer">VIEWER</span></td>
+            <td><span style="font-size:12px;color:var(--text-muted)">Sin overrides</span></td>
+            <td><span class="status-dot"><span class="dot dot-r"></span>Inactivo</span></td>
+            <td style="font-size:12px;color:var(--text-muted)">—</td>
+            <td><button class="btn-sm" onclick="openModal('m-usuario-perms');setUsuarioPerms('Viewer Solo Lectura','VIEWER','#52c41a')">🔧 Ajustar</button></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+
+<!-- ══════════════════════════════════════════
+     MODALES
+══════════════════════════════════════════ -->
+
+<!-- ═══ MODAL: VER ROL ═══ -->
+<div class="modal-bg" id="m-ver-rol">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="ver-rol-title">Permisos del rol</div>
+        <div class="modal-subtitle">Vista de solo lectura</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('m-ver-rol')">✕</button>
+    </div>
+    <div class="modal-body" id="ver-rol-body"></div>
+    <div class="modal-footer"><button class="btn btn-default" onclick="closeModal('m-ver-rol')">Cerrar</button></div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: NUEVO ROL ═══ -->
+<div class="modal-bg" id="m-nuevo-rol">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">＋ Nuevo rol personalizado</div>
+        <div class="modal-subtitle">Define permisos específicos para este despacho</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('m-nuevo-rol')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row" style="margin-bottom:16px">
+        <div class="form-group" style="margin-bottom:0">
+          <label class="lbl">Nombre del rol *</label>
+          <input class="inp" placeholder="ej: CONTADOR_EXTERNO" style="text-transform:uppercase">
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label class="lbl">Color identificador</label>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:2px">
+            <div id="color-opt-1" class="color-opt" style="width:24px;height:24px;border-radius:50%;background:#13c2c2;cursor:pointer;border:3px solid transparent" onclick="selectColor('#13c2c2','color-opt-1')"></div>
+            <div id="color-opt-2" class="color-opt" style="width:24px;height:24px;border-radius:50%;background:#eb2f96;cursor:pointer;border:3px solid transparent" onclick="selectColor('#eb2f96','color-opt-2')"></div>
+            <div id="color-opt-3" class="color-opt" style="width:24px;height:24px;border-radius:50%;background:#fa8c16;cursor:pointer;border:3px solid transparent" onclick="selectColor('#fa8c16','color-opt-3')"></div>
+            <div id="color-opt-4" class="color-opt" style="width:24px;height:24px;border-radius:50%;background:#a0d911;cursor:pointer;border:3px solid transparent" onclick="selectColor('#a0d911','color-opt-4')"></div>
+            <div id="color-opt-5" class="color-opt" style="width:24px;height:24px;border-radius:50%;background:#2f54eb;cursor:pointer;border:3px solid transparent" onclick="selectColor('#2f54eb','color-opt-5')"></div>
+            <input type="color" value="#13c2c2" id="custom-color" style="width:24px;height:24px;border-radius:50%;border:none;cursor:pointer;padding:0">
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="lbl">Descripción</label>
+        <textarea class="txta" placeholder="Describe qué puede hacer este rol..."></textarea>
+      </div>
+      <div id="perm-editor-nuevo"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('m-nuevo-rol')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAndClose('m-nuevo-rol','Rol creado correctamente ✅')">Crear rol</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDITAR ROL ═══ -->
+<div class="modal-bg" id="m-editar-rol">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="edit-rol-title">Editar rol</div>
+        <div class="modal-subtitle">Rol personalizado del despacho</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('m-editar-rol')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="lbl">Nombre del rol</label>
+        <input class="inp" id="edit-rol-nombre" value="AUDITOR" style="text-transform:uppercase">
+      </div>
+      <div class="form-group">
+        <label class="lbl">Descripción</label>
+        <textarea class="txta">Solo puede consultar declaraciones y exportar reportes. Sin acceso a contraseñas.</textarea>
+      </div>
+      <div id="perm-editor-editar"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('m-editar-rol')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAndClose('m-editar-rol','Rol actualizado correctamente ✅')">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: ELIMINAR ROL ═══ -->
+<div class="modal-bg" id="m-eliminar-rol">
+  <div class="modal modal-sm">
+    <div class="modal-header">
+      <span class="modal-title">🗑 Eliminar rol</span>
+      <button class="modal-close" onclick="closeModal('m-eliminar-rol')">✕</button>
+    </div>
+    <div class="modal-body" style="text-align:center;padding:28px 24px">
+      <div style="font-size:40px;margin-bottom:14px">🛡️</div>
+      <p style="font-size:14px;font-weight:700;margin-bottom:8px">¿Eliminar el rol <span id="del-rol-nombre" style="color:var(--error)"></span>?</p>
+      <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;margin-bottom:14px">Los usuarios asignados a este rol serán reasignados automáticamente a <strong>VIEWER</strong> hasta que se les asigne otro rol.</p>
+      <div style="background:var(--error-bg);border:1px solid #ffccc7;border-radius:8px;padding:10px 14px;font-size:12.5px;color:#a8071a;text-align:left">
+        ⚠️ Esta acción no se puede deshacer. Verifica que ningún usuario dependa de este rol antes de eliminarlo.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('m-eliminar-rol')">Cancelar</button>
+      <button class="btn btn-danger" onclick="saveAndClose('m-eliminar-rol','Rol eliminado ✅')">Sí, eliminar rol</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: PERMISOS POR USUARIO ═══ -->
+<div class="modal-bg" id="m-usuario-perms">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="up-title">Ajustar permisos</div>
+        <div class="modal-subtitle">Los overrides se aplican encima del rol base</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('m-usuario-perms')">✕</button>
+    </div>
+    <div class="modal-body">
+      <!-- Info del usuario -->
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:#f5f7fa;border-radius:8px;margin-bottom:18px">
+        <div id="up-avatar" class="av-md" style="width:38px;height:38px;font-size:15px">G</div>
+        <div>
+          <div style="font-weight:700;font-size:14px" id="up-nombre">Gestor Prueba</div>
+          <div style="font-size:12px;color:var(--text-muted)">Rol base: <span id="up-rol-badge"></span></div>
+        </div>
+      </div>
+
+      <div class="override-section">
+        <div class="override-title">⚡ Overrides activos para este usuario</div>
+        <div class="override-desc">Los ítems marcados en verde amplían permisos; en rojo los restringen. Haz clic para activar/desactivar.</div>
+        <div class="override-grid" id="up-overrides"></div>
+      </div>
+
+      <div id="up-perm-editor"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('m-usuario-perms')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveAndClose('m-usuario-perms','Permisos del usuario actualizados ✅')">Guardar permisos</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── Datos de permisos ──────────────────────────────────────────
+const MODULES = [
+  { key:'dashboard',    label:'Dashboard',       icon:'📊' },
+  { key:'contribuyentes', label:'Contribuyentes',icon:'👥' },
+  { key:'declaraciones',  label:'Declaraciones', icon:'📄' },
+  { key:'certificados',   label:'Certificados',  icon:'🔐' },
+  { key:'plataformas',    label:'Plataformas',   icon:'🌐' },
+  { key:'usuarios',       label:'Usuarios',      icon:'👤' },
+  { key:'roles',          label:'Roles y Permisos', icon:'🛡️' },
+  { key:'config',         label:'Configuración', icon:'⚙️' },
+  { key:'exportar',       label:'Exportar datos',icon:'📤' },
+];
+
+const ACTIONS = ['ver','crear','editar','eliminar'];
+
+// Permisos por rol: true=permitido, false=denegado, null=N/A
+const ROL_PERMS = {
+  ADMIN:  {
+    dashboard:{ver:true,crear:null,editar:null,eliminar:null},
+    contribuyentes:{ver:true,crear:true,editar:true,eliminar:true},
+    declaraciones:{ver:true,crear:true,editar:true,eliminar:true},
+    certificados:{ver:true,crear:true,editar:true,eliminar:true},
+    plataformas:{ver:true,crear:true,editar:true,eliminar:true},
+    usuarios:{ver:true,crear:true,editar:true,eliminar:true},
+    roles:{ver:true,crear:true,editar:true,eliminar:true},
+    config:{ver:true,crear:null,editar:true,eliminar:null},
+    exportar:{ver:null,crear:null,editar:null,eliminar:null},
+  },
+  GESTOR: {
+    dashboard:{ver:true,crear:null,editar:null,eliminar:null},
+    contribuyentes:{ver:true,crear:true,editar:true,eliminar:false},
+    declaraciones:{ver:true,crear:true,editar:true,eliminar:false},
+    certificados:{ver:true,crear:true,editar:true,eliminar:false},
+    plataformas:{ver:true,crear:true,editar:true,eliminar:false},
+    usuarios:{ver:false,crear:false,editar:false,eliminar:false},
+    roles:{ver:false,crear:false,editar:false,eliminar:false},
+    config:{ver:false,crear:null,editar:false,eliminar:null},
+    exportar:{ver:null,crear:null,editar:null,eliminar:null},
+  },
+  VIEWER: {
+    dashboard:{ver:true,crear:null,editar:null,eliminar:null},
+    contribuyentes:{ver:true,crear:false,editar:false,eliminar:false},
+    declaraciones:{ver:true,crear:false,editar:false,eliminar:false},
+    certificados:{ver:true,crear:false,editar:false,eliminar:false},
+    plataformas:{ver:false,crear:false,editar:false,eliminar:false},
+    usuarios:{ver:false,crear:false,editar:false,eliminar:false},
+    roles:{ver:false,crear:false,editar:false,eliminar:false},
+    config:{ver:false,crear:null,editar:false,eliminar:null},
+    exportar:{ver:null,crear:null,editar:null,eliminar:null},
+  },
+  AUDITOR: {
+    dashboard:{ver:true,crear:null,editar:null,eliminar:null},
+    contribuyentes:{ver:true,crear:false,editar:false,eliminar:false},
+    declaraciones:{ver:true,crear:false,editar:false,eliminar:false},
+    certificados:{ver:true,crear:false,editar:false,eliminar:false},
+    plataformas:{ver:false,crear:false,editar:false,eliminar:false},
+    usuarios:{ver:false,crear:false,editar:false,eliminar:false},
+    roles:{ver:false,crear:false,editar:false,eliminar:false},
+    config:{ver:false,crear:null,editar:false,eliminar:null},
+    exportar:{ver:null,crear:null,editar:null,eliminar:null},
+  },
+};
+
+const ROL_COLORS = {ADMIN:'#722ed1',GESTOR:'#1677ff',VIEWER:'#52c41a',AUDITOR:'#faad14'};
+
+// ── Helpers ────────────────────────────────────────────────────
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+function showPane(id,btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.main-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('pane-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+function saveAndClose(modalId,msg){closeModal(modalId);showToast(msg)}
+
+// ── Generar editor de permisos ─────────────────────────────────
+function buildPermEditor(containerId, rolKey, readOnly=false){
+  const el=document.getElementById(containerId);
+  if(!el) return;
+  const perms=ROL_PERMS[rolKey]||{};
+  let html='';
+  MODULES.forEach(mod=>{
+    html+=`<div class="perm-section">
+      <div class="perm-section-title">${mod.icon} ${mod.label}</div>
+      <div class="perm-grid">`;
+    ACTIONS.forEach(action=>{
+      const val=perms[mod.key]?.[action];
+      if(val===null){
+        html+=`<div class="perm-item" style="opacity:.4;pointer-events:none">
+          <span class="perm-item-label">
+            <span class="perm-cb" style="opacity:.4">—</span>
+            ${actionLabel(action)}
+          </span>
+          <span style="font-size:10px;color:var(--text-muted)">N/A</span>
+        </div>`;
+      } else {
+        const cls=val?'checked':'';
+        const icon=val?'✓':'✕';
+        html+=`<div class="perm-item ${cls}" onclick="${readOnly?'':'togglePermItem(this)'}" style="${readOnly?'cursor:default':''}">
+          <span class="perm-item-label">
+            <span class="perm-cb">${icon}</span>
+            ${actionLabel(action)}
+          </span>
+          <span style="font-size:10px;color:${val?'var(--success)':'var(--error)'}">
+            ${val?'Permitido':'Denegado'}
+          </span>
+        </div>`;
+      }
+    });
+    html+='</div></div>';
+  });
+  el.innerHTML=html;
+}
+
+function actionLabel(a){
+  return {ver:'👁 Ver',crear:'➕ Crear',editar:'✏️ Editar',eliminar:'🗑 Eliminar'}[a]||a;
+}
+function togglePermItem(el){
+  el.classList.toggle('checked');
+  const cb=el.querySelector('.perm-cb');
+  const status=el.querySelector('span:last-child');
+  if(el.classList.contains('checked')){
+    cb.textContent='✓';status.textContent='Permitido';status.style.color='var(--success)';
+  } else {
+    cb.textContent='✕';status.textContent='Denegado';status.style.color='var(--error)';
+  }
+}
+
+// ── VER ROL ────────────────────────────────────────────────────
+function setModalRol(rolName, color){
+  document.getElementById('ver-rol-title').textContent=`Permisos: ${rolName}`;
+  buildPermEditor('ver-rol-body', rolName, true);
+}
+
+// ── EDITAR ROL ─────────────────────────────────────────────────
+function initEditarRol(){
+  document.getElementById('edit-rol-nombre').value='AUDITOR';
+  buildPermEditor('perm-editor-editar','AUDITOR',false);
+}
+
+// ── NUEVO ROL ──────────────────────────────────────────────────
+function initNuevoRol(){
+  // parte con VIEWER como base y todo desmarcado
+  buildPermEditor('perm-editor-nuevo','VIEWER',false);
+}
+
+// ── USUARIO PERMS ──────────────────────────────────────────────
+const USER_OVERRIDES = {
+  'Gestor Prueba':[
+    {key:'declaraciones.eliminar', label:'Eliminar declaraciones', type:'grant'},
+    {key:'exportar', label:'Exportar datos', type:'revoke'},
+  ]
+};
+
+function setUsuarioPerms(nombre, rol, color){
+  document.getElementById('up-title').textContent='Permisos de: '+nombre;
+  document.getElementById('up-nombre').textContent=nombre;
+  document.getElementById('up-avatar').textContent=nombre[0];
+  document.getElementById('up-avatar').style.background=color;
+  const badge=document.getElementById('up-rol-badge');
+  badge.innerHTML=`<span style="background:${color}22;color:${color};padding:1px 8px;border-radius:10px;font-size:12px;font-weight:600;border:1px solid ${color}44">${rol}</span>`;
+
+  // Overrides
+  const overrides=USER_OVERRIDES[nombre]||[];
+  const og=document.getElementById('up-overrides');
+  if(overrides.length===0){
+    og.innerHTML=`<div style="grid-column:1/-1;font-size:12.5px;color:var(--text-muted);font-style:italic">Sin overrides configurados</div>`;
+  } else {
+    og.innerHTML=overrides.map(o=>`
+      <div class="override-item ${o.type}" onclick="this.classList.toggle('active')" style="cursor:pointer">
+        <span>${o.type==='grant'?'✅':'🚫'}</span>
+        <span>${o.label}</span>
+      </div>`).join('');
+  }
+
+  buildPermEditor('up-perm-editor', rol, false);
+}
+
+// ── MATRIZ ─────────────────────────────────────────────────────
+function buildMatrix(){
+  const roles=['ADMIN','GESTOR','VIEWER','AUDITOR'];
+  let html='';
+  MODULES.forEach(mod=>{
+    html+=`<tr class="module-group"><td colspan="5">${mod.icon} ${mod.label}</td></tr>`;
+    ACTIONS.forEach(action=>{
+      html+=`<tr><td class="module-cell" style="padding-left:28px;color:var(--text-secondary);font-size:12px">${actionLabel(action)}</td>`;
+      roles.forEach(rol=>{
+        const val=ROL_PERMS[rol]?.[mod.key]?.[action];
+        if(val===null){
+          html+=`<td><span class="perm-toggle na" title="N/A">—</span></td>`;
+        } else if(val){
+          html+=`<td><span class="perm-toggle on" title="Permitido">✓</span></td>`;
+        } else {
+          html+=`<td><span class="perm-toggle off" title="Denegado">✕</span></td>`;
+        }
+      });
+      html+='</tr>';
+    });
+  });
+  document.getElementById('matrix-body').innerHTML=html;
+}
+
+// ── Color selector ─────────────────────────────────────────────
+function selectColor(color,id){
+  document.querySelectorAll('.color-opt').forEach(el=>el.style.border='3px solid transparent');
+  document.getElementById(id).style.border='3px solid #0a0f1e';
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+buildMatrix();
+initNuevoRol();
+initEditarRol();
+</script>
+</body>
+</html>

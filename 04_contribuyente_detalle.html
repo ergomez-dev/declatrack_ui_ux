@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>DECLATRACK — Detalle Contribuyente</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1677ff;--primary-bg:#e6f4ff;--success:#52c41a;--warning:#faad14;--error:#ff4d4f;--text-main:#0a0f1e;--text-secondary:#5a6171;--text-muted:#9aa3b0;--border:#dde1e7;--bg-page:#f0f4f8;--bg-card:#fff;--sidebar-w:220px;--topbar-h:56px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-page);color:var(--text-main);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0}
+.sidebar-logo{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.logo-icon{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),#4096ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+.logo-text{font-size:15px;font-weight:700}
+.tenant-badge{margin:12px 14px;background:linear-gradient(135deg,#fff7e6,#fffbe6);border:1px solid #ffd666;border-radius:8px;padding:8px 12px}
+.tenant-name{font-size:12px;font-weight:600;color:#874d00}
+.tenant-plan{display:inline-block;margin-top:2px;font-size:10px;background:#ffc53d;color:#613400;padding:1px 7px;border-radius:10px;font-weight:600}
+.nav{padding:8px 0;flex:1}.nav-item{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-left:3px solid transparent;transition:all .15s;text-decoration:none}.nav-item:hover{background:#f5f7fa}.nav-item.active{color:var(--primary);background:var(--primary-bg);border-left-color:var(--primary)}.nav-section{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;padding:14px 20px 4px}
+.sidebar-footer{padding:12px 14px;border-top:1px solid var(--border)}.user-chip{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px;cursor:pointer}.avatar{width:30px;height:30px;background:var(--primary);border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.user-name{font-size:12.5px;font-weight:600}.user-role{font-size:11px;color:var(--text-muted)}
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;gap:16px;z-index:99}
+.topbar-title{font-size:14px;font-weight:500;flex:1;color:var(--text-secondary)}
+.topbar-title strong{color:var(--text-main)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+.btn{padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:all .15s}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:#0958d9}
+.btn-default{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}.btn-default:hover{background:#f5f7fa}
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:24px;flex:1}
+/* HERO CARD */
+.hero-card{background:linear-gradient(135deg,#0d1b4b,#1677ff);border-radius:12px;padding:24px 28px;color:#fff;margin-bottom:20px;position:relative;overflow:hidden}
+.hero-card::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:rgba(255,255,255,.06)}
+.hero-rfc{font-family:'Courier New',monospace;font-size:13px;opacity:.75;letter-spacing:.5px;margin-bottom:6px}
+.hero-name{font-size:22px;font-weight:700;margin-bottom:10px}
+.hero-tags{display:flex;gap:8px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:20px;font-size:12px;font-weight:600}
+.tag-regimen{background:rgba(255,255,255,.18);color:#fff}
+.tag-active{background:rgba(82,196,26,.25);color:#95f27b}
+.tag-alert{background:rgba(255,77,79,.25);color:#ffb3b4}
+.hero-actions{position:absolute;top:20px;right:24px;display:flex;gap:8px}
+.btn-ghost{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.25);padding:6px 14px;border-radius:7px;font-size:12.5px;font-weight:500;cursor:pointer;font-family:inherit;backdrop-filter:blur(4px)}
+.btn-ghost:hover{background:rgba(255,255,255,.25)}
+/* TABS */
+.tabs-bar{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:20px;background:#fff;border-radius:10px 10px 0 0;overflow:hidden}
+.tab-btn{padding:12px 20px;font-size:13.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;border:none;background:transparent;border-bottom:3px solid transparent;font-family:inherit;transition:all .15s;display:flex;align-items:center;gap:6px}
+.tab-btn:hover{color:var(--text-main);background:#f5f7fa}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary);background:#fff}
+.tab-pane{display:none}.tab-pane.active{display:block}
+.card{background:var(--bg-card);border-radius:10px;border:1px solid var(--border);overflow:hidden}
+.card-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-title{font-size:14px;font-weight:600}
+.card-body{padding:16px 18px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:9px 12px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);white-space:nowrap;background:#fafbfc}
+td{padding:10px 12px;border-bottom:1px solid #f0f2f5;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafbfc}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600}
+.b-pendiente{background:#fff7e6;color:#873800;border:1px solid #ffd591}
+.b-presentada{background:#e6f4ff;color:#003eb3;border:1px solid #91caff}
+.b-enviada{background:#e6fffb;color:#006d75;border:1px solid #87e8de}
+.b-entregada{background:#f6ffed;color:#237804;border:1px solid #b7eb8f}
+.b-no-aplica{background:#fafafa;color:#595959;border:1px solid #d9d9d9}
+.cert-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.cert-card{border:1px solid var(--border);border-radius:10px;padding:16px;position:relative}
+.cert-card.danger{border-color:#ffccc7;background:#fff2f0}
+.cert-card.warning{border-color:#ffe58f;background:#fffbe6}
+.cert-card.ok{border-color:#b7eb8f;background:#f6ffed}
+.cert-type{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--text-muted);margin-bottom:6px}
+.cert-status{font-size:22px;font-weight:700;margin-bottom:4px}
+.cert-date{font-size:12px;color:var(--text-secondary)}
+.cert-alert{margin-top:10px;padding:6px 10px;border-radius:6px;font-size:12px;font-weight:600}
+.alert-danger{background:#fff2f0;color:#a8071a}
+.alert-warning{background:#fffbe6;color:#ad6800}
+.alert-ok{background:#f6ffed;color:#237804}
+.plat-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.plat-card{border:1px solid var(--border);border-radius:10px;padding:16px}
+.plat-name{font-size:12px;font-weight:700;letter-spacing:.3px;color:var(--text-secondary);text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.plat-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.plat-label{font-size:11px;color:var(--text-muted);width:70px;flex-shrink:0}
+.plat-value{font-size:13px;font-weight:500;flex:1}
+.plat-pw{font-size:13px;font-family:'Courier New',monospace;letter-spacing:2px;flex:1}
+.eye-btn{width:24px;height:24px;border:none;background:transparent;cursor:pointer;font-size:14px;color:var(--text-muted)}
+.eye-btn:hover{color:var(--primary)}
+.chips{display:flex;gap:4px}
+.chip{width:16px;height:16px;border-radius:50%;border:2px solid;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700}
+.chip-yes{border-color:var(--success);color:var(--success)}
+.chip-no{border-color:var(--text-muted);color:var(--text-muted)}
+.constancia-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field-group{margin-bottom:12px}
+.field-label{font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.field-val{font-size:14px;font-weight:500;color:var(--text-main)}
+.field-val.muted{color:var(--text-muted)}
+.bool-yes{color:var(--success);font-weight:600}
+.bool-no{color:var(--error);font-weight:600}
+.btn-sm{padding:4px 10px;font-size:12px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;font-weight:500;color:var(--text-secondary)}
+.btn-sm:hover{border-color:var(--primary);color:var(--primary)}
+.back-btn{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);cursor:pointer;margin-bottom:14px;text-decoration:none}
+.back-btn:hover{color:var(--primary)}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sidebar-logo"><div class="logo-icon">📋</div><span class="logo-text">DECLATRACK</span></div>
+  <div class="tenant-badge"><div class="tenant-name">Despacho Contable Demo S.C.</div><span class="tenant-plan">PRO</span></div>
+  <nav class="nav">
+    <span class="nav-section">General</span>
+    <a class="nav-item" href="02_dashboard.html"><span>📊</span> Dashboard</a>
+    <a class="nav-item active" href="03_contribuyentes.html"><span>👥</span> Contribuyentes</a>
+    <a class="nav-item" href="05_declaraciones.html"><span>📄</span> Declaraciones</a>
+    <a class="nav-item" href="06_certificados.html"><span>🔐</span> Certificados</a>
+    <a class="nav-item" href="07_plataformas.html"><span>🌐</span> Plataformas</a>
+    <span class="nav-section">Administración</span>
+    <a class="nav-item" href="08_usuarios.html"><span>👤</span> Usuarios</a>
+    <a class="nav-item" href="10_config.html"><span>⚙️</span> Configuración</a>
+  </nav>
+  <div class="sidebar-footer"><div class="user-chip"><div class="avatar">A</div><div><div class="user-name">Administrador</div><div class="user-role">ADMIN</div></div></div></div>
+</aside>
+
+<header class="topbar">
+  <div class="topbar-title">Contribuyentes / <strong>REYNA V. AVALOS ZACARÍAS</strong></div>
+  <div class="topbar-actions">
+    <button class="btn btn-default" onclick="window.location.href='03_contribuyentes.html'">‹ Volver</button>
+    <button class="btn btn-primary" onclick="openM('m-editar')">✏️ Editar</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="hero-card">
+    <div class="hero-rfc">RFC: AAZR830117S4A</div>
+    <div class="hero-name">REYNA VICTORIA AVALOS ZACARÍAS</div>
+    <div class="hero-tags">
+      <span class="tag tag-regimen">📋 RESICO</span>
+      <span class="tag tag-active">✓ Activa</span>
+      <span class="tag tag-alert">⚠ E.firma vencida</span>
+    </div>
+    <div class="hero-actions">
+      <button class="btn-ghost" onclick="openM('m-editar')">✏️ Editar</button>
+      <button class="btn-ghost" style="background:rgba(255,77,79,.25);border-color:rgba(255,77,79,.4)" onclick="if(confirm('¿Dar de baja a REYNA V. AVALOS?'))alert('Contribuyente dado de baja')">🚫 Dar de baja</button>
+    </div>
+  </div>
+
+  <div class="tabs-bar">
+    <button class="tab-btn active" onclick="showTab('declaraciones',this)">📄 Declaraciones <span style="background:var(--primary-bg);color:var(--primary);padding:1px 7px;border-radius:10px;font-size:11px">12</span></button>
+    <button class="tab-btn" onclick="showTab('certificados',this)">🔐 Certificados <span style="background:#fff2f0;color:#a8071a;padding:1px 7px;border-radius:10px;font-size:11px">⚠</span></button>
+    <button class="tab-btn" onclick="showTab('plataformas',this)">🌐 Plataformas <span style="background:#f6ffed;color:#237804;padding:1px 7px;border-radius:10px;font-size:11px">4</span></button>
+    <button class="tab-btn" onclick="showTab('constancia',this)">📑 Constancia fiscal</button>
+  </div>
+
+  <!-- TAB DECLARACIONES -->
+  <div class="tab-pane active" id="tab-declaraciones">
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">Historial de declaraciones</span>
+        <button class="btn btn-primary" style="font-size:12px;padding:5px 12px" onclick="openM('m-declaracion')">＋ Nueva declaración</button>
+      </div>
+      <table>
+        <thead><tr><th>Período</th><th>Tipo</th><th>Status declaración</th><th>Status entrega</th><th>Fecha mes 1</th><th>Fecha mes 2</th><th>Notas</th></tr></thead>
+        <tbody>
+          <tr><td><strong>2026-B3</strong></td><td><span class="badge b-no-aplica">BIMESTRAL</span></td><td><span class="badge b-pendiente">PENDIENTE</span></td><td><span class="badge b-pendiente">PENDIENTE</span></td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td><strong>2026-B2</strong></td><td><span class="badge b-no-aplica">BIMESTRAL</span></td><td><span class="badge b-presentada">PRESENTADA</span></td><td><span class="badge b-enviada">ENVIADA</span></td><td>12/mar</td><td>08/abr</td><td>—</td></tr>
+          <tr><td><strong>2026-B1</strong></td><td><span class="badge b-no-aplica">BIMESTRAL</span></td><td><span class="badge b-entregada">ENTREGADA</span></td><td><span class="badge b-entregada">ENTREGADA</span></td><td>15/ene</td><td>14/feb</td><td>—</td></tr>
+          <tr><td><strong>2025-B6</strong></td><td><span class="badge b-no-aplica">BIMESTRAL</span></td><td><span class="badge b-entregada">ENTREGADA</span></td><td><span class="badge b-entregada">ENTREGADA</span></td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td><strong>2025-B5</strong></td><td><span class="badge b-no-aplica">BIMESTRAL</span></td><td><span class="badge b-entregada">ENTREGADA</span></td><td><span class="badge b-entregada">ENTREGADA</span></td><td>—</td><td>—</td><td>—</td></tr>
+          <tr><td><strong>2025 ANUAL</strong></td><td><span style="background:#f9f0ff;color:#531dab;border:1px solid #d3adf7;padding:3px 9px;border-radius:20px;font-size:11.5px;font-weight:600">ANUAL</span></td><td><span class="badge b-pendiente">PENDIENTE</span></td><td><span class="badge b-pendiente">PENDIENTE</span></td><td>—</td><td>—</td><td>pendiente</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- TAB CERTIFICADOS -->
+  <div class="tab-pane" id="tab-certificados">
+    <div class="cert-grid">
+      <div class="cert-card danger">
+        <div class="cert-type">🔐 E.FIRMA</div>
+        <div class="cert-status" style="color:#a8071a">VENCIDA</div>
+        <div class="cert-date">Venció el <strong>14 de mayo 2026</strong></div>
+        <div class="cert-date" style="margin-top:4px">Descarga XML: 14/ene/2026</div>
+        <div class="cert-alert alert-danger">⚠ Certificado vencido — renovar de inmediato</div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn-sm" onclick="document.getElementById('cert-tipo-label').textContent='E.FIRMA — AAZR830117S4A';document.getElementById('cert-alerta-banner').style.display='block';openM('m-certificado')">✏️ Actualizar fecha</button>
+          <button class="btn-sm">✉️ Notificar</button>
+        </div>
+      </div>
+      <div class="cert-card ok">
+        <div class="cert-type">🔐 CSD</div>
+        <div class="cert-status" style="color:#237804">VIGENTE</div>
+        <div class="cert-date">Vence el <strong>14 de agosto 2026</strong></div>
+        <div class="cert-date" style="margin-top:4px">Descarga XML: 14/ene/2026</div>
+        <div class="cert-alert alert-ok">✓ Vigente — faltan 48 días</div>
+        <div style="margin-top:12px"><button class="btn-sm" onclick="document.getElementById('cert-tipo-label').textContent='CSD — AAZR830117S4A';document.getElementById('cert-alerta-banner').style.display='none';openM('m-certificado')">✏️ Actualizar fecha</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB PLATAFORMAS -->
+  <div class="tab-pane" id="tab-plataformas">
+    <div class="plat-grid">
+      <div class="plat-card"><div class="plat-name">🏛 Buzón SAT Q</div><div class="plat-row"><span class="plat-label">Usuario</span><span class="plat-value" style="font-family:monospace">AAZR830117S4A</span></div><div class="plat-row"><span class="plat-label">Contraseña</span><span class="plat-pw" id="pw1">••••••••</span><button class="eye-btn" onclick="togglePw('pw1','Alan14rv')">👁</button></div><div class="plat-row"><span class="plat-label">2FA</span><div class="chips"><span class="chip chip-yes" title="Correo activo">✓</span><span class="chip chip-no" title="Teléfono inactivo">✕</span></div></div></div>
+      <div class="plat-card"><div class="plat-name">📬 Buzón Tributario</div><div class="plat-row"><span class="plat-label">Usuario</span><span class="plat-value" style="font-family:monospace">AAZR830117S4A</span></div><div class="plat-row"><span class="plat-label">Contraseña</span><span class="plat-pw" id="pw2">••••••••</span><button class="eye-btn" onclick="togglePw('pw2','Alan14rv')">👁</button></div><div class="plat-row"><span class="plat-label">2FA</span><div class="chips"><span class="chip chip-yes">✓</span><span class="chip chip-yes">✓</span></div></div></div>
+      <div class="plat-card"><div class="plat-name">💻 SIFO</div><div class="plat-row"><span class="plat-label">Usuario</span><span class="plat-value">—</span></div><div class="plat-row"><span class="plat-label">Contraseña</span><span class="plat-pw">—</span></div><div class="plat-row"><span class="plat-label">Nota</span><span style="font-size:12px;color:var(--text-muted)">No registrado</span></div><div style="margin-top:8px"><button class="btn-sm" onclick="document.getElementById('plat-sel').value='SIFO';document.getElementById('plat-modal-title').textContent='＋ Agregar acceso: SIFO';openM('m-plataforma')">＋ Agregar</button></div></div>
+      <div class="plat-card"><div class="plat-name">🏙 Ayuntamiento</div><div class="plat-row"><span class="plat-label">Usuario</span><span class="plat-value" style="font-family:monospace">AAZR830117S4A</span></div><div class="plat-row"><span class="plat-label">Contraseña</span><span class="plat-pw" id="pw4">••••••••</span><button class="eye-btn" onclick="togglePw('pw4','Alan14rv')">👁</button></div><div class="plat-row"><span class="plat-label">2FA</span><div class="chips"><span class="chip chip-no">✕</span><span class="chip chip-yes">✓</span></div></div></div>
+    </div>
+  </div>
+
+  <!-- TAB CONSTANCIA -->
+  <div class="tab-pane" id="tab-constancia">
+    <div class="card">
+      <div class="card-header"><span class="card-title">Constancia de situación fiscal</span><button class="btn btn-default" style="font-size:12px;padding:5px 12px" onclick="openM('m-constancia')">✏️ Editar</button></div>
+      <div class="card-body">
+        <div class="constancia-grid">
+          <div class="field-group"><div class="field-label">Régimen RESICO</div><div class="field-val bool-no">NO</div></div>
+          <div class="field-group"><div class="field-label">Régimen RIF</div><div class="field-val bool-no">NO</div></div>
+          <div class="field-group"><div class="field-label">Mes de trámite</div><div class="field-val muted">—</div></div>
+          <div class="field-group"><div class="field-label">Día de trámite</div><div class="field-val muted">—</div></div>
+          <div class="field-group"><div class="field-label">Anuales 2022</div><div class="field-val">Pendiente</div></div>
+          <div class="field-group"><div class="field-label">Anuales 2024</div><div class="field-val">Pendiente</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+function showTab(id,btn){
+  document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+const pwState={};
+function togglePw(id,real){
+  const el=document.getElementById(id);
+  if(pwState[id]){el.textContent='••••••••';pwState[id]=false;}
+  else{el.textContent=real;pwState[id]=true;}
+}
+function toggleSw(id){
+  const sw=document.getElementById(id);
+  const isOn=sw.style.background.includes('1677');
+  sw.style.background=isOn?'#d9d9d9':'#1677ff';
+  const dot=sw.querySelector('div');
+  dot.style.left=isOn?'2px':'18px';
+}
+
+function closeM(id){document.getElementById(id).classList.remove('show')}
+function saveM(id,msg){
+  closeM(id);
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.display='flex';
+  setTimeout(()=>t.style.display='none',3000);
+}
+</script>
+
+<!-- ═══ MODAL: EDITAR CONTRIBUYENTE ═══ -->
+<div class="modal-bg" id="m-editar">
+  <div class="modal" style="width:520px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">✏️ Editar contribuyente</div>
+        <div style="font-size:11px;color:var(--text-muted);font-family:monospace;margin-top:2px">RFC: AAZR830117S4A</div>
+      </div>
+      <button class="modal-close" onclick="closeM('m-editar')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group" style="margin-bottom:14px"><label>RFC</label><input value="AAZR830117S4A" style="background:#f5f7fa;font-family:monospace" readonly></div>
+        <div class="form-group" style="margin-bottom:14px"><label>Clave SAT</label><input value="alan14rv"></div>
+      </div>
+      <div class="form-group" style="margin-bottom:14px"><label>Nombre completo *</label><input value="REYNA VICTORIA AVALOS ZACARÍAS"></div>
+      <div class="form-group" style="margin-bottom:14px"><label>Correo electrónico</label><input type="email" value="reynavic@gmail.com"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        <div class="form-group" style="margin-bottom:14px"><label>Régimen fiscal</label>
+          <select style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+            <option selected>RESICO</option><option>RIF</option><option>General</option><option>Otro</option>
+          </select>
+        </div>
+        <div class="form-group" style="margin-bottom:14px;display:flex;flex-direction:column;justify-content:flex-end">
+          <label>Estado</label>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:4px">
+            <div style="width:40px;height:22px;background:var(--success);border-radius:11px;position:relative;cursor:pointer" onclick="this.style.background=this.style.background.includes('52')? '#d9d9d9':'#52c41a'"><div style="width:18px;height:18px;background:#fff;border-radius:50%;position:absolute;top:2px;right:2px;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div></div>
+            <span style="font-size:13px;color:var(--text-secondary)">Activo</span>
+          </div>
+        </div>
+      </div>
+      <div class="form-group" style="margin-bottom:0"><label>Notas</label><textarea style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:60px;outline:none" placeholder="Observaciones..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeM('m-editar')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveM('m-editar','Contribuyente actualizado correctamente ✅')">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: NUEVA DECLARACIÓN ═══ -->
+<div class="modal-bg" id="m-declaracion">
+  <div class="modal" style="width:560px">
+    <div class="modal-header">
+      <span class="modal-title">＋ Nueva declaración</span>
+      <button class="modal-close" onclick="closeM('m-declaracion')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px">
+      <div style="background:var(--primary-bg);border:1px solid #91caff;border-radius:8px;padding:9px 13px;font-size:12.5px;color:#003eb3;margin-bottom:16px">
+        📋 Contribuyente: <strong>REYNA VICTORIA AVALOS ZACARÍAS</strong> · AAZR830117S4A · RESICO
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Período *</label><input placeholder="ej: 2026-B3 o 2026-06" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:monospace;outline:none" value="2026-B3"></div>
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Tipo *</label>
+          <select style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+            <option>BIMESTRAL</option><option>MENSUAL</option><option>ANUAL</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Status declaración</label>
+          <select style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+            <option>PENDIENTE</option><option>PRESENTADA</option><option>ENVIADA</option><option>ENTREGADA</option><option>NO APLICA</option>
+          </select>
+        </div>
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Status entrega</label>
+          <select style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+            <option>PENDIENTE</option><option>PRESENTADA</option><option>ENVIADA</option><option>ENTREGADA</option><option>NO APLICA</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Fecha mes 1</label><input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none"></div>
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Fecha mes 2</label><input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none"></div>
+      </div>
+      <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Notas</label><textarea style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:60px;outline:none" placeholder="Observaciones opcionales..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeM('m-declaracion')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveM('m-declaracion','Declaración creada correctamente ✅')">Guardar declaración</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: ACTUALIZAR CERTIFICADO ═══ -->
+<div class="modal-bg" id="m-certificado">
+  <div class="modal" style="width:440px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">✏️ Actualizar certificado</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="cert-tipo-label">E.FIRMA — AAZR830117S4A</div>
+      </div>
+      <button class="modal-close" onclick="closeM('m-certificado')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px">
+      <div id="cert-alerta-banner" style="background:#fff2f0;border:1px solid #ffccc7;border-radius:8px;padding:9px 13px;font-size:12.5px;color:#a8071a;margin-bottom:16px">
+        ⚠️ Este certificado está <strong>vencido</strong>. Registra la nueva fecha de vencimiento tras renovarlo.
+      </div>
+      <div style="margin-bottom:14px"><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Tipo de certificado</label>
+        <select id="cert-tipo-sel" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+          <option>E.FIRMA</option><option>CSD</option>
+        </select>
+      </div>
+      <div style="margin-bottom:14px"><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Nueva fecha de vencimiento *</label><input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none"></div>
+      <div style="margin-bottom:14px"><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Fecha descarga XML</label><input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none"></div>
+      <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Notas</label><textarea style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:56px;outline:none" placeholder="Observaciones opcionales..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeM('m-certificado')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveM('m-certificado','Certificado actualizado correctamente ✅')">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: AGREGAR/EDITAR PLATAFORMA ═══ -->
+<div class="modal-bg" id="m-plataforma">
+  <div class="modal" style="width:480px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title" id="plat-modal-title">＋ Agregar acceso: SIFO</div>
+        <div style="font-size:11px;color:var(--text-muted);font-family:monospace;margin-top:2px">REYNA V. AVALOS · AAZR830117S4A</div>
+      </div>
+      <button class="modal-close" onclick="closeM('m-plataforma')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px">
+      <div style="margin-bottom:14px"><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Plataforma</label>
+        <select id="plat-sel" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+          <option>Buzón SAT Q</option><option>Buzón Tributario</option><option selected>SIFO</option><option>Ayuntamiento</option>
+        </select>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Usuario / RFC *</label><input placeholder="AAZR830117S4A" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:monospace;outline:none"></div>
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Contraseña *</label>
+          <div style="position:relative">
+            <input type="password" id="plat-pw-input" placeholder="••••••••" style="width:100%;padding:8px 36px 8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+            <button onclick="const i=document.getElementById('plat-pw-input');i.type=i.type==='password'?'text':'password'" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:14px;color:var(--text-muted)">👁</button>
+          </div>
+        </div>
+      </div>
+      <div style="background:#f5f7fa;border-radius:8px;padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:8px">Verificación en dos pasos (2FA)</div>
+        <div style="display:flex;gap:20px">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:36px;height:20px;background:#d9d9d9;border-radius:10px;position:relative;cursor:pointer;transition:.2s" id="sw-correo" onclick="toggleSw('sw-correo')"><div style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div></div>
+            <span style="font-size:13px;color:var(--text-secondary)">Correo activo</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:36px;height:20px;background:#d9d9d9;border-radius:10px;position:relative;cursor:pointer;transition:.2s" id="sw-tel" onclick="toggleSw('sw-tel')"><div style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div></div>
+            <span style="font-size:13px;color:var(--text-secondary)">Teléfono activo</span>
+          </div>
+        </div>
+      </div>
+      <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Notas</label><textarea style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:56px;outline:none" placeholder="Observaciones opcionales..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeM('m-plataforma')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveM('m-plataforma','Acceso de plataforma guardado ✅')">💾 Guardar acceso</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL: EDITAR CONSTANCIA FISCAL ═══ -->
+<div class="modal-bg" id="m-constancia">
+  <div class="modal" style="width:480px">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">📑 Editar constancia fiscal</div>
+        <div style="font-size:11px;color:var(--text-muted);font-family:monospace;margin-top:2px">REYNA V. AVALOS · AAZR830117S4A</div>
+      </div>
+      <button class="modal-close" onclick="closeM('m-constancia')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+          <div>
+            <div style="font-size:12.5px;font-weight:600">Régimen RESICO</div>
+            <div style="font-size:11.5px;color:var(--text-muted)">¿aplica RESICO?</div>
+          </div>
+          <div style="width:36px;height:20px;background:#d9d9d9;border-radius:10px;position:relative;cursor:pointer" id="sw-resico" onclick="toggleSw('sw-resico')"><div style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;border:1px solid var(--border);border-radius:8px;padding:10px 14px">
+          <div>
+            <div style="font-size:12.5px;font-weight:600">Régimen RIF</div>
+            <div style="font-size:11.5px;color:var(--text-muted)">¿aplica RIF?</div>
+          </div>
+          <div style="width:36px;height:20px;background:#d9d9d9;border-radius:10px;position:relative;cursor:pointer" id="sw-rif" onclick="toggleSw('sw-rif')"><div style="width:16px;height:16px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;box-shadow:0 1px 3px rgba(0,0,0,.2)"></div></div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Mes de trámite</label>
+          <select style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+            <option value="">Sin registro</option>
+            <option>Enero</option><option>Febrero</option><option>Marzo</option><option>Abril</option><option>Mayo</option><option>Junio</option>
+            <option>Julio</option><option>Agosto</option><option>Septiembre</option><option>Octubre</option><option>Noviembre</option><option>Diciembre</option>
+          </select>
+        </div>
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Día de trámite</label><input type="number" min="1" max="31" placeholder="—" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Anuales 2022 — Fecha</label><input type="date" style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none"></div>
+        <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Anuales 2024 — Status</label>
+          <select style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;outline:none">
+            <option value="">Sin registro</option><option>Pendiente</option><option>Presentada</option><option>Entregada</option>
+          </select>
+        </div>
+      </div>
+      <div><label style="display:block;font-size:12.5px;font-weight:600;margin-bottom:5px">Notas</label><textarea style="width:100%;padding:8px 12px;border:1px solid var(--border);border-radius:7px;font-size:13.5px;font-family:inherit;resize:vertical;min-height:56px;outline:none" placeholder="Observaciones..."></textarea></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeM('m-constancia')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveM('m-constancia','Constancia fiscal actualizada ✅')">Guardar constancia</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div id="toast" style="position:fixed;bottom:24px;right:24px;background:#fff;border:1px solid #b7eb8f;border-radius:10px;padding:14px 18px;font-size:13px;font-weight:600;color:#237804;box-shadow:0 4px 20px rgba(0,0,0,.12);display:none;align-items:center;gap:8px;z-index:9999"></div>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>DECLATRACK — Plataformas</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1677ff;--primary-bg:#e6f4ff;--success:#52c41a;--error:#ff4d4f;--text-main:#0a0f1e;--text-secondary:#5a6171;--text-muted:#9aa3b0;--border:#dde1e7;--bg-page:#f0f4f8;--bg-card:#fff;--sidebar-w:220px;--topbar-h:56px}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg-page);display:flex;min-height:100vh}
+.sidebar{width:var(--sidebar-w);background:#fff;border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0}
+.sl{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}.li{width:34px;height:34px;background:linear-gradient(135deg,var(--primary),#4096ff);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}.lt{font-size:15px;font-weight:700}
+.tb{margin:12px 14px;background:linear-gradient(135deg,#fff7e6,#fffbe6);border:1px solid #ffd666;border-radius:8px;padding:8px 12px}.tn{font-size:12px;font-weight:600;color:#874d00}.tp{display:inline-block;margin-top:2px;font-size:10px;background:#ffc53d;color:#613400;padding:1px 7px;border-radius:10px;font-weight:600}
+.nav{padding:8px 0;flex:1}.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;font-size:13.5px;font-weight:500;color:var(--text-secondary);cursor:pointer;border-left:3px solid transparent;transition:all .15s;text-decoration:none}.ni:hover{background:#f5f7fa}.ni.active{color:var(--primary);background:var(--primary-bg);border-left-color:var(--primary)}.ns{font-size:10px;font-weight:700;color:var(--text-muted);letter-spacing:.8px;text-transform:uppercase;padding:14px 20px 4px}
+.sf{padding:12px 14px;border-top:1px solid var(--border)}.uc{display:flex;align-items:center;gap:9px;padding:8px;border-radius:8px}.av{width:30px;height:30px;background:var(--primary);border-radius:50%;color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center}.un{font-size:12.5px;font-weight:600}.ur{font-size:11px;color:var(--text-muted)}
+.topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 24px;z-index:99}
+.tt{font-size:16px;font-weight:700;flex:1}.tt span{font-size:13px;font-weight:400;color:var(--text-muted)}
+.main{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:24px;flex:1}
+.ph{margin-bottom:20px}.ph h2{font-size:20px;font-weight:700}.ph p{font-size:13px;color:var(--text-secondary);margin-top:2px}
+.info-bar{background:#e6f4ff;border:1px solid #91caff;border-radius:8px;padding:10px 14px;font-size:13px;color:#003eb3;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.search-wrap{position:relative;max-width:280px;margin-bottom:16px}.si{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--text-muted)}.si-input{width:100%;padding:8px 10px 8px 32px;border:1px solid var(--border);border-radius:8px;font-size:13.5px;font-family:inherit;outline:none}
+.card{background:var(--bg-card);border-radius:10px;border:1px solid var(--border);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 14px;font-size:11px;font-weight:600;color:var(--text-muted);text-transform:uppercase;border-bottom:1px solid var(--border);background:#fafbfc;white-space:nowrap}
+td{padding:11px 14px;border-bottom:1px solid #f0f2f5;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafbfc}
+.rfc-text{font-family:'Courier New',monospace;font-size:11.5px;color:var(--text-muted)}
+.plat-cell{display:flex;justify-content:center}
+.check{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700}
+.check-yes{background:#f6ffed;color:var(--success)}
+.check-no{background:#fafafa;color:var(--text-muted)}
+.check-partial{background:#fffbe6;color:#d4830a}
+.btn-sm{padding:4px 10px;font-size:12px;border-radius:6px;border:1px solid var(--border);background:#fff;cursor:pointer;font-family:inherit;font-weight:500;color:var(--text-secondary)}
+.btn-sm:hover{border-color:var(--primary);color:var(--primary)}
+.pagination{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-top:1px solid var(--border);background:#fafbfc}
+.pag-info{font-size:12px;color:var(--text-muted)}.pag-btns{display:flex;gap:4px}.pag-btn{width:30px;height:30px;border:1px solid var(--border);border-radius:6px;background:#fff;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center;color:var(--text-secondary)}.pag-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+/* MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(10,15,30,.5);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}.modal-bg.show{display:flex}
+.modal{background:#fff;border-radius:14px;width:580px;max-width:95vw;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{width:28px;height:28px;border-radius:6px;border:none;background:#f5f7fa;cursor:pointer;font-size:16px}
+.modal-body{padding:20px 24px}
+.plat-section{border:1px solid var(--border);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.plat-header{padding:10px 16px;background:#f5f7fa;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700}
+.plat-fields{padding:14px 16px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+label{display:block;font-size:11.5px;font-weight:600;color:var(--text-secondary);margin-bottom:4px}
+input{width:100%;padding:7px 10px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;outline:none}
+input:focus{border-color:var(--primary)}
+.toggle-row{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);margin-top:4px}
+.sw{width:32px;height:18px;background:#d9d9d9;border-radius:9px;position:relative;cursor:pointer;flex-shrink:0}.sw.on{background:var(--primary)}.sw::after{content:'';width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:.2s}.sw.on::after{left:16px}
+.modal-footer{padding:14px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
+.btn{padding:7px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit}
+.btn-primary{background:var(--primary);color:#fff}.btn-default{background:#fff;color:var(--text-secondary);border:1px solid var(--border)}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="sl"><div class="li">📋</div><span class="lt">DECLATRACK</span></div>
+  <div class="tb"><div class="tn">Despacho Contable Demo S.C.</div><span class="tp">PRO</span></div>
+  <nav class="nav">
+    <span class="ns">General</span>
+    <a class="ni" href="02_dashboard.html">📊 Dashboard</a>
+    <a class="ni" href="03_contribuyentes.html">👥 Contribuyentes</a>
+    <a class="ni" href="05_declaraciones.html">📄 Declaraciones</a>
+    <a class="ni" href="06_certificados.html">🔐 Certificados</a>
+    <a class="ni active">🌐 Plataformas</a>
+    <span class="ns">Administración</span>
+    <a class="ni" href="08_usuarios.html">👤 Usuarios</a>
+    <a class="ni" href="10_config.html">⚙️ Configuración</a>
+  </nav>
+  <div class="sf"><div class="uc"><div class="av">A</div><div><div class="un">Administrador</div><div class="ur">ADMIN</div></div></div></div>
+</aside>
+<header class="topbar">
+  <div class="tt">Plataformas <span>/ Accesos externos</span></div>
+</header>
+<main class="main">
+  <div class="ph"><h2>Accesos a plataformas</h2><p>Credenciales de acceso cifradas a plataformas externas por contribuyente</p></div>
+  <div class="info-bar">🔒 Las contraseñas están cifradas con AES-256-GCM. Solo ADMIN y GESTOR pueden verlas. Haz clic en un contribuyente para gestionar sus accesos.</div>
+  <div class="search-wrap"><span class="si">🔍</span><input class="si-input" placeholder="Buscar contribuyente..." /></div>
+  <div class="card">
+    <table>
+      <thead><tr><th>RFC</th><th>Contribuyente</th><th style="text-align:center">Buzón SAT Q</th><th style="text-align:center">Buzón Tributario</th><th style="text-align:center">SIFO</th><th style="text-align:center">Ayuntamiento</th><th>Acción</th></tr></thead>
+      <tbody>
+        <tr><td class="rfc-text">AAZR830117S4A</td><td><strong>REYNA V. AVALOS Z.</strong></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-no">—</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td><button class="btn-sm" onclick="openModal('REYNA V. AVALOS ZACARÍAS','AAZR830117S4A')">✏️ Gestionar</button></td></tr>
+        <tr><td class="rfc-text">BALJ621005UB6</td><td><strong>JESSICA M. BARRIOS L.</strong></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td><button class="btn-sm" onclick="openModal('JESSICA M. BARRIOS','BALJ621005UB6')">✏️ Gestionar</button></td></tr>
+        <tr><td class="rfc-text">CAAA660222AL3</td><td><strong>ARMANDO CAMACHO A.</strong></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-no">—</div></td><td class="plat-cell"><div class="check check-no">—</div></td><td><button class="btn-sm" onclick="openModal('ARMANDO CAMACHO','CAAA660222AL3')">✏️ Gestionar</button></td></tr>
+        <tr><td class="rfc-text">CAGJ690731GH4</td><td><strong>JAIME CALDERÓN G.</strong></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-partial">~</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td><button class="btn-sm" onclick="openModal('JAIME CALDERÓN','CAGJ690731GH4')">✏️ Gestionar</button></td></tr>
+        <tr><td class="rfc-text">LAGS640210GV4</td><td><strong>SILVIA LARA GARCÍA</strong></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td><button class="btn-sm">✏️ Gestionar</button></td></tr>
+        <tr><td class="rfc-text">TUTE8107148U2</td><td><strong>EDGAR I. TUN TUZ</strong></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td class="plat-cell"><div class="check check-no">—</div></td><td class="plat-cell"><div class="check check-yes">✓</div></td><td><button class="btn-sm">✏️ Gestionar</button></td></tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <span class="pag-info">Mostrando 1–6 de 31 contribuyentes</span>
+      <div class="pag-btns"><button class="pag-btn">‹</button><button class="pag-btn active">1</button><button class="pag-btn">2</button><button class="pag-btn">3</button><button class="pag-btn">›</button></div>
+    </div>
+  </div>
+</main>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-header"><span class="modal-title" id="modal-name">Accesos de plataforma</span><button class="modal-close" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">
+      <div style="font-size:12px;color:var(--text-muted);font-family:monospace;margin-bottom:16px;padding:6px 10px;background:#f5f7fa;border-radius:6px" id="modal-rfc">RFC</div>
+      <div class="plat-section"><div class="plat-header">🏛 Buzón SAT Q</div><div class="plat-fields"><div><label>Usuario</label><input value="AAZR830117S4A"/></div><div><label>Contraseña</label><input type="password" value="Alan14rv"/></div></div><div style="padding:0 16px 12px;display:flex;gap:16px"><div class="toggle-row"><div class="sw on"></div>Correo activo</div><div class="toggle-row"><div class="sw"></div>Teléfono activo</div></div></div>
+      <div class="plat-section"><div class="plat-header">📬 Buzón Tributario</div><div class="plat-fields"><div><label>Usuario</label><input value="AAZR830117S4A"/></div><div><label>Contraseña</label><input type="password" value="Alan14rv"/></div></div><div style="padding:0 16px 12px;display:flex;gap:16px"><div class="toggle-row"><div class="sw on"></div>Correo activo</div><div class="toggle-row"><div class="sw on"></div>Teléfono activo</div></div></div>
+      <div class="plat-section"><div class="plat-header">💻 SIFO</div><div class="plat-fields"><div><label>Usuario</label><input placeholder="Sin registro"/></div><div><label>Contraseña</label><input type="password" placeholder="Sin registro"/></div></div></div>
+      <div class="plat-section"><div class="plat-header">🏙 Ayuntamiento</div><div class="plat-fields"><div><label>Usuario</label><input value="AAZR830117S4A"/></div><div><label>Contraseña</label><input type="password" value="Alan14rv"/></div></div></div>
+    </div>
+    <div class="modal-footer"><button class="btn btn-default" onclick="closeModal()">Cancelar</button><button class="btn btn-primary">💾 Guardar cambios</button></div>
+  </div>
+</div>
+<script>
+function openModal(name,rfc){document.getElementById('modal-name').textContent='Accesos: '+name;document.getElementById('modal-rfc').textContent='RFC: '+rfc;document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+</script>
+</body></html>
